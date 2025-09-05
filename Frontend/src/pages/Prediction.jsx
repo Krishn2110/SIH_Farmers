@@ -1,6 +1,7 @@
 import React, { useState } from 'react'; 
 import { ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Prediction = () => {
   const [soilType, setSoilType] = useState('Select Soil Type');
@@ -13,11 +14,55 @@ const Prediction = () => {
   const [nitrogen, setNitrogen] = useState('');
   const [phosphorous, setPhosphorous] = useState('');
   const [previousYield, setPreviousYield] = useState('');
+  const [result, setResult] = useState("");   // for prediction result
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const fontFamily = {
     fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+  };
+
+  // Function to call Flask API
+  const handlePredict = async () => {
+    // Basic validation
+    if (soilType === 'Select Soil Type' || previousCrop === 'Select Previous Crop') {
+      setResult("Please select soil type and previous crop");
+      return;
+    }
+    
+    if (!soilPh || !temperature || !rainfall || !humidity || !phosphorus || !nitrogen || !phosphorous || !previousYield) {
+      setResult("Please fill in all required fields");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await axios.post("http://127.0.0.1:5000/predict", {
+        soilType,
+        previousCrop,
+        soilPh: parseFloat(soilPh),
+        temperature: parseFloat(temperature),
+        rainfall: parseFloat(rainfall),
+        humidity: parseFloat(humidity),
+        phosphorus: parseFloat(phosphorus),
+        nitrogen: parseFloat(nitrogen),
+        phosphorous: parseFloat(phosphorous),
+        previousYield: parseFloat(previousYield)
+      });
+      setResult(response.data.prediction);
+    } catch (error) {
+      console.error("Error predicting:", error);
+      if (error.response) {
+        setResult(`Error: ${error.response.data.error || 'Server error'}`);
+      } else if (error.request) {
+        setResult("Error: Cannot connect to server. Make sure Flask is running on port 5000");
+      } else {
+        setResult("Error: Something went wrong");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -214,12 +259,23 @@ const Prediction = () => {
 
               {/* Predict Button */}
               <button 
-                className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold px-12 py-4 rounded-full transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-green-200 transform hover:scale-105 hover:shadow-xl shadow-lg" 
+                onClick={handlePredict}
+                disabled={loading}
+                className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold px-12 py-4 rounded-full transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-green-200 transform hover:scale-105 hover:shadow-xl shadow-lg disabled:opacity-50" 
                 style={fontFamily}
               >
-                Predict Yield
+                {loading ? "Predicting..." : "Predict Yield"}
               </button>
             </div>
+
+            {/* Show prediction result */}
+            {result && (
+              <div className="mt-10 text-center">
+                <h2 className="text-2xl font-bold text-green-600">
+                  Predicted Crop: {result}
+                </h2>
+              </div>
+            )}
 
           </div>
         </div>
