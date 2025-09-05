@@ -164,81 +164,6 @@ const Home = () => {
                 fill="none"
                 viewBox="0 0 24 24"
               >
-<<<<<<< HEAD
-                <div className="absolute inset-0 bg-black bg-opacity-45"></div> {/* Overlay for readability */}
-                <div className="container mx-auto px-4 text-center flex flex-col items-center justify-center min-h-[350px] relative z-10">
-                  <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
-                    Maximize Your Harvest with Precision
-                  </h1>
-                  <p className="text-xl text-white max-w-3xl mx-auto mb-10">
-                    AgriPredict empowers farmers with accurate yield predictions based on soil analysis,
-                    weather patterns, and historical crop data. Make informed decisions, optimize resource
-                    allocation, and boost your productivity.
-                  </p>
-                  {/* ✅ Conditional Button */}
-                <button
-                    onClick={handleClick}
-                    className="bg-gradient-to-r from-green-600 to-emerald-600 text-white 
-font-bold py-3 px-8 rounded-lg text-lg 
-flex items-center gap-2 transition duration-300 
-hover:from-green-700 hover:to-emerald-700
-"
-                    >
-                    {isLoggedIn ? "Predict Your Crop" : "Get Started"}
-                    <span className="text-xl">→</span>
-                </button>
-                </div>
-              </section>
-      
-      
-            {/* How It Works Section */}
-            <section className="py-20 bg-white">
-              <div className="container mx-auto px-4">
-                <h2 className="text-3xl font-bold text-center text-gray-900 mb-4">How It Works</h2>
-                <p className="text-gray-600 text-center max-w-2xl mx-auto mb-16">
-                  Our process is simple and designed to give you actionable insights quickly.
-                </p>
-      
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-                  {/* Step 1 */}
-                  <div className="text-center">
-                    <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-6">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-3">Input Your Data</h3>
-                    <p className="text-gray-600">
-                      Enter your farm's data, including soil type, historical weather patterns, and previous crop yields. The more data you provide, the more accurate the prediction.
-                    </p>
-                  </div>
-      
-                  {/* Step 2 */}
-                  <div className="text-center">
-                    <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-6">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                      </svg>
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-3">Get Your Prediction</h3>
-                    <p className="text-gray-600">
-                      Our powerful algorithm analyzes your data to generate a detailed crop yield prediction. See the potential of your harvest in just a few clicks.
-                    </p>
-                  </div>
-      
-                  {/* Step 3 */}
-                  <div className="text-center">
-                    <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-6">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 0 002 2h10a2 2 0 002-2V7a2 2 0 0-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                      </svg>
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-3">Apply Recommendations</h3>
-                    <p className="text-gray-600">
-                      Receive data-driven recommendations to optimize your farming practices, from irrigation schedules to fertilizer application, ensuring you get the most out of your land.
-                    </p>
-                  </div>
-=======
                 <circle
                   className="opacity-25"
                   cx="12"
@@ -281,7 +206,6 @@ hover:from-green-700 hover:to-emerald-700
               <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-6 transform hover:scale-110 transition-all duration-300">
                 <div className="w-12 h-12 rounded-full bg-[#097A4E] flex items-center justify-center text-white">
                   <span className="poppins-bold">1</span>
->>>>>>> b082b6a1837aa8ff9313ef15a9f3708e12c36b45
                 </div>
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-3 poppins-semibold">Input Your Data</h3>
@@ -349,22 +273,6 @@ hover:from-green-700 hover:to-emerald-700
                 </p>
               </div>
             </div>
-<<<<<<< HEAD
-          </section>
-      
-      {/* Call-to-Action */}
-      <section className="py-20 bg-gradient-to-b from-green-600 to-emerald-600 text-center text-white
-">
-        <h2 className="text-3xl font-bold mb-4">
-          Ready to Transform Your Farming?
-        </h2>
-        <p className="text-lg max-w-2xl mx-auto mb-8">
-          Join AgriPredict today and make smarter crop decisions with AI.
-        </p>
-        <button className="bg-white text-green-600 hover:bg-gray-100 font-bold py-3 px-8 rounded-lg text-lg transition duration-300">
-          Explore Features
-        </button>
-=======
   
             {/* Feature 2 - Historical Data Analysis */}
             <div className={`bg-white rounded-lg shadow-md overflow-hidden transition-all duration-500 hover:shadow-xl hover:-translate-y-2 delay-100 ${isVisible.features ? 'opacity-100' : 'opacity-0'}`}>
@@ -411,7 +319,6 @@ hover:from-green-700 hover:to-emerald-700
             </div>
           </div>
         </div>
->>>>>>> b082b6a1837aa8ff9313ef15a9f3708e12c36b45
       </section>
 
       {/* Feedback Section */}
