@@ -76,7 +76,7 @@ import logo from "../assets/logo.png";
 const Navbar = () => {
   const navigate = useNavigate();
 
-  // temporary login state (replace with real auth later)
+  // temporary login state (replace witah real auth later)
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   return (
@@ -94,8 +94,23 @@ const Navbar = () => {
           <h1 className="text-2xl font-bold text-gray-900">KishanMitra</h1>
         </div>
 
-        {/* Navigation Menu */}
+        {/* Navigation Menu with animations */}
         <nav className="hidden space-x-8 md:flex">
+
+          {["Dashboard", "Features", "Pricing", "Support"].map((item) => (
+            <a
+              key={item}
+              href="#"
+              className="relative font-medium text-gray-600 transition duration-300 ease-in-out hover:text-green-600 group"
+            >
+              <span className="transition-transform duration-300 ease-in-out group-hover:scale-110">
+                {item}
+              </span>
+              {/* Underline animation */}
+              <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-green-500 transition-all duration-300 ease-in-out group-hover:w-full"></span>
+            </a>
+          ))}
+=======
           <a href="#" className="font-medium text-gray-600 hover:text-green-500">
             Home
           </a>

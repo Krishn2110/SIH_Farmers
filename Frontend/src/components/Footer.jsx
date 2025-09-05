@@ -67,11 +67,9 @@ import { FaWhatsapp, FaYoutube, FaFacebook } from "react-icons/fa";
 
 const Footer = () => {
   return (
-    <footer className="bg-gradient-to-b from-green-600 to-emerald-600 text-white py-10 mt-16
-">
-      <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8 text-center md:text-left">
-        
-        {/* Column 1 - About */}
+    <footer className="bg-gradient-to-r from-[#097A4E] to-[#065a3a] text-white py-10 mt-16">
+      <div className="container mx-auto px-4 text-center md:text-left grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* About */}
         <div>
           <h3 className="text-xl font-bold mb-3">🌱 KishanMitra</h3>
           <p className="text-green-100">
