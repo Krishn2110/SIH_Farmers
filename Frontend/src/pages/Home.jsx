@@ -42,7 +42,11 @@ const Home = () => {
                   {/* ✅ Conditional Button */}
                 <button
                     onClick={handleClick}
-                    className="bg-green-500 text-white hover:bg-green-600 font-bold py-3 px-8 rounded-lg text-lg flex items-center gap-2 transition duration-300"
+                    className="bg-gradient-to-r from-green-600 to-emerald-600 text-white 
+font-bold py-3 px-8 rounded-lg text-lg 
+flex items-center gap-2 transition duration-300 
+hover:from-green-700 hover:to-emerald-700
+"
                     >
                     {isLoggedIn ? "Predict Your Crop" : "Get Started"}
                     <span className="text-xl">→</span>
@@ -292,7 +296,8 @@ const Home = () => {
           </section>
       
       {/* Call-to-Action */}
-      <section className="py-20 bg-green-500 text-center text-white">
+      <section className="py-20 bg-gradient-to-b from-green-600 to-emerald-600 text-center text-white
+">
         <h2 className="text-3xl font-bold mb-4">
           Ready to Transform Your Farming?
         </h2>
