@@ -2,17 +2,17 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import heroImg from "../assets/hero_img.jpg";
-import farmer1 from "../assets/farmer1.jpg";
-import farmer2 from "../assets/farmer2.jpg";
-import farmer3 from "../assets/farmer3.jpg";
-import dashboardImg from "../assets/dashboard.jpg";
-import analysisImg from "../assets/analysis.jpg";
-import databaseImg from "../assets/database.jpg";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import heroImg from "../../assets/hero_img.jpg";
+import farmer1 from "../../assets/farmer1.jpg";
+import farmer2 from "../../assets/farmer2.jpg";
+import farmer3 from "../../assets/farmer3.jpg";
+import dashboardImg from "../../assets/dashboard.jpg";
+import analysisImg from "../../assets/analysis.jpg";
+import databaseImg from "../../assets/database.jpg";
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
 
-const Home = () => {
+const FarmerDashboard = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [isVisible, setIsVisible] = useState({
@@ -151,37 +151,42 @@ const Home = () => {
             allocation, and boost your productivity.
           </p>
           <button
-            onClick={handleClick}
-            disabled={loading}
-            className={`bg-[#097A4E] text-white hover:bg-[#066042] font-bold py-3 px-8 rounded-lg text-lg flex items-center gap-2 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl poppins-semibold ${
-              loading ? "opacity-70 cursor-not-allowed" : ""
-            }`}
-          >
-            {loading ? (
-              <svg
-                className="w-5 h-5 mr-2 text-white animate-spin"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                ></path>
-              </svg>
-            ) : null}
-            {"Get Started"}
-            {!loading && <span className="text-xl transition-transform duration-300 group-hover:translate-x-1">→</span>}
-          </button>
+  onClick={() => navigate("/dashboard")}
+  disabled={loading}
+  className={`bg-[#097A4E] text-white hover:bg-[#066042] font-bold py-3 px-8 rounded-lg text-lg flex items-center gap-2 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl poppins-semibold ${
+    loading ? "opacity-70 cursor-not-allowed" : ""
+  }`}
+>
+  {loading ? (
+    <svg
+      className="w-5 h-5 mr-2 text-white animate-spin"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+      <circle
+        className="opacity-25"
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        strokeWidth="4"
+      ></circle>
+      <path
+        className="opacity-75"
+        fill="currentColor"
+        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+      ></path>
+    </svg>
+  ) : null}
+  {"Start Your Prediction"}
+  {!loading && (
+    <span className="text-xl transition-transform duration-300 group-hover:translate-x-1">
+      →
+    </span>
+  )}
+</button>
+
         </div>
         
         {/* Animated scroll indicator */}
@@ -504,4 +509,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default FarmerDashboard;
