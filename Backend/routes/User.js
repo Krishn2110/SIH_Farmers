@@ -212,7 +212,7 @@ userRoute.post("/verify-phone-otp", async (req, res) => {
     // 2. Check expiry
     if (record.expiresAt.getTime() < Date.now()) {
       return res.status(400).json({ message: "OTP expired" });
-    }
+    } 
 
     // 3. Find or create user
     let user = await User.findOne({ phoneNumber: phone });
