@@ -5,11 +5,6 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-<<<<<<< HEAD
-    extend: {fontFamily: {
-        orbitron: ["Orbitron", "sans-serif"],
-      },},
-=======
     extend: {
       keyframes: {
         zoomIn: {
@@ -26,7 +21,6 @@ export default {
         slowZoom: "slowZoom 20s ease-in-out infinite alternate", // continuous bg zoom
       },
     },
->>>>>>> 64d327245bea35fed88497cf346800dd067dc679
   },
   plugins: [],
 }

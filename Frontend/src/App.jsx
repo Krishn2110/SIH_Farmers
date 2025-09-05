@@ -18,8 +18,7 @@ const ProtectedRoute = ({ children }) => {
 };
 
 import Profile from "./pages/Profile";
-import Dashboard from "./pages/Dashboard";
-import Prediction from "./pages/Prediction";
+import Dashboard from "./pages/farmer/Dashboard";
 
 function App() {
   return (
@@ -35,9 +34,9 @@ function App() {
         <Route
           path="/prediction"
           element={
-            <ProtectedRoute>
+            // <ProtectedRoute>
               <Prediction />
-            </ProtectedRoute>
+            // </ProtectedRoute>
           }
         />
         <Route
@@ -48,7 +47,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-=======
         <Route path="/profile" element={<Profile />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/prediction" element={<Prediction />} />
