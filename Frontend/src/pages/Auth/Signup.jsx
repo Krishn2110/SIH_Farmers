@@ -56,28 +56,62 @@ function Signup() {
   }, []);
 
   // Handle Signup
+  // const handleSignup = async (e) => {
+  //   e.preventDefault();
+  //   setError("");
+
+  //   if (
+  //     !formData.name ||
+  //     (signupMethod === "email" && !formData.email) ||
+  //     (signupMethod === "phone" && !formData.phone) ||
+  //     !formData.password
+  //   ) {
+  //     setError("Please fill all required fields");
+  //     return;
+  //   }
+
+  //   setLoading(true);
+
+  //   try {
+  //     if (signupMethod === "email") {
+  //       const data = new FormData();
+  //       data.append("UserName", formData.name);
+  //       data.append("UserEmail", formData.email);
+  //       data.append("Password", formData.password);
+  //       if (profileImage) data.append("profileImage", profileImage);
+
+  //       await api.post("/auth/signup", data, {
+  //         headers: { "Content-Type": "multipart/form-data" },
+  //       });
+
+  //       await api.post("/auth/send-otp", { UserEmail: formData.email });
+  //       alert("OTP sent to your email. Please verify.");
+  //       navigate("/login");
+  //     } else {
+  //       await api.post("/auth/send-phone-otp", { phoneNumber: formData.phone });
+  //       setShowOtp(true);
+  //       alert("OTP sent to your phone");
+  //     }
+  //   } catch (err) {
+  //     setError(err.response?.data?.message || "Signup failed");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+
+
   const handleSignup = async (e) => {
     e.preventDefault();
     setError("");
-
-    if (
-      !formData.name ||
-      (signupMethod === "email" && !formData.email) ||
-      (signupMethod === "phone" && !formData.phone) ||
-      !formData.password
-    ) {
-      setError("Please fill all required fields");
-      return;
-    }
-
     setLoading(true);
 
     try {
       if (signupMethod === "email") {
         const data = new FormData();
-        data.append("name", formData.name);
-        data.append("email", formData.email);
-        data.append("password", formData.password);
+        data.append("UserName", formData.name);
+        data.append("UserEmail", formData.email);
+        data.append("Password", formData.password);
         if (profileImage) data.append("profileImage", profileImage);
 
         await api.post("/auth/signup", data, {
@@ -85,14 +119,14 @@ function Signup() {
         });
 
         await api.post("/auth/send-otp", { UserEmail: formData.email });
-        alert("OTP sent to your email. Please verify.");
-        alert("Account created successfully!");
-        navigate("/farmer-dashboard");
-
-      } else {
-        await api.post("/auth/send-phone-otp", { phoneNumber: formData.phone });
+        alert("OTP sent to your email. Please verify to complete signup.");
+        // navigate("/login");
         setShowOtp(true);
-        alert("OTP sent to your phone");
+      } else {
+        await api.post("/auth/send-phone-otp", { phone: formData.phone });
+        
+
+        setShowOtp(true);
       }
     } catch (err) {
       setError(err.response?.data?.message || "Signup failed");
@@ -101,29 +135,33 @@ function Signup() {
     }
   };
 
+
   // Handle OTP verification
-  const handleOtpVerify = async (e) => {
+ const handleOtpVerify = async (e) => {
     e.preventDefault();
     setError("");
-
-    if (!otp) {
-      setError("Please enter OTP");
-      return;
-    }
-
     setLoading(true);
-
     try {
-      await api.post("/auth/verify-phone-otp", {
-        phone: formData.phone,
-        otp,
-        name: formData.name,
-        password: formData.password,
-      });
-
-      alert("Account created successfully! Please login.");
-      alert("Account created successfully!");
-      navigate("/farmer-dashboard");
+      if (signupMethod === "email") {
+        // Email OTP
+        const res = await api.post("/auth/verify-otp", {
+          UserEmail: formData.email,
+          otp,
+        });
+        alert("Account created successfully!");
+        // Optionally, auto-login
+        login(res.data.token, res.data.user);
+      } else {
+        // Phone OTP
+        await api.post("/auth/verify-phone-otp", {
+          phone: formData.phone,
+          otp,
+          Name: formData.name,
+          Password: formData.password,
+        });
+        alert("Account created successfully!");
+      }
+      navigate("/login");
     } catch (err) {
       setError(err.response?.data?.message || "OTP verification failed");
     } finally {
