@@ -19,6 +19,10 @@ const ProtectedRoute = ({ children }) => {
 
 import Profile from "./pages/Profile";
 import Dashboard from "./pages/farmer/Dashboard";
+import Dashboard from "./pages/Dashboard";
+import Prediction from "./pages/Prediction"
+import Prediction from "./pages/Prediction";
+
 
 function App() {
   return (
