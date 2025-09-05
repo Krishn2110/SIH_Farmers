@@ -22,33 +22,38 @@ const Home = () => {
       {/* Navbar */}
       <Navbar />
 
-      {/* Hero Section */}
-              <section
-                className="pt-24 pb-20 relative bg-cover bg-center"
-                style={{
-                  backgroundImage: `url(${heroImg})`, // replace with your actual image path
-                }}
-              >
-                <div className="absolute inset-0 bg-black bg-opacity-45"></div> {/* Overlay for readability */}
-                <div className="container mx-auto px-4 text-center flex flex-col items-center justify-center min-h-[350px] relative z-10">
-                  <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
-                    Maximize Your Harvest with Precision
-                  </h1>
-                  <p className="text-xl text-white max-w-3xl mx-auto mb-10">
-                    AgriPredict empowers farmers with accurate yield predictions based on soil analysis,
-                    weather patterns, and historical crop data. Make informed decisions, optimize resource
-                    allocation, and boost your productivity.
-                  </p>
-                  {/* ✅ Conditional Button */}
-                <button
-                    onClick={handleClick}
-                    className="bg-green-500 text-white hover:bg-green-600 font-bold py-3 px-8 rounded-lg text-lg flex items-center gap-2 transition duration-300"
-                    >
-                    {isLoggedIn ? "Predict Your Crop" : "Get Started"}
-                    <span className="text-xl">→</span>
-                </button>
-                </div>
-              </section>
+     {/* Hero Section */}
+<section
+  className="pt-24 pb-20 relative bg-cover bg-center"
+  style={{
+    backgroundImage: `url(${heroImg})`, // replace with your actual image path
+  }}
+>
+  {/* Overlay for readability */}
+  <div className="absolute inset-0 bg-black bg-opacity-45"></div>
+
+  {/* Content with zoom-in */}
+  <div className="container mx-auto px-4 text-center flex flex-col items-center justify-center min-h-[350px] relative z-10 animate-zoomIn">
+    <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
+      Maximize Your Harvest with Precision
+    </h1>
+    <p className="text-xl text-white max-w-3xl mx-auto mb-10">
+      AgriPredict empowers farmers with accurate yield predictions based on soil analysis,
+      weather patterns, and historical crop data. Make informed decisions, optimize resource
+      allocation, and boost your productivity.
+    </p>
+
+    {/* ✅ Conditional Button */}
+    <button
+      onClick={handleClick}
+      className="bg-green-500 text-white hover:bg-green-600 font-bold py-3 px-8 rounded-lg text-lg flex items-center gap-2 transition duration-300"
+    >
+      {isLoggedIn ? "Predict Your Crop" : "Get Started"}
+      <span className="text-xl">→</span>
+    </button>
+  </div>
+</section>
+
       
       
             {/* How It Works Section */}
