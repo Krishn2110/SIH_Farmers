@@ -6,32 +6,32 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   return (
-    <header className="fixed top-0 left-0 right-0 bg-white shadow-sm z-50">
-      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm">
+      <div className="container flex items-center justify-between px-4 py-3 mx-auto">
         {/* Logo */}
         <div className="flex items-center">
-          <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center mr-2 overflow-hidden">
+          <div className="flex items-center justify-center w-10 h-10 mr-2 overflow-hidden bg-white rounded-full">
             <img
               src={logo}
               alt="AgriPredict Logo"
-              className="w-full h-full object-contain"
+              className="object-contain w-full h-full"
             />
           </div>
           <h1 className="text-2xl font-bold text-gray-900">AgriPredict</h1>
         </div>
 
         {/* Navigation Menu */}
-        <nav className="hidden md:flex space-x-8">
-          <a href="#" className="text-gray-600 hover:text-green-500 font-medium">
+        <nav className="hidden space-x-8 md:flex">
+          <a href="#" className="font-medium text-gray-600 hover:text-green-500">
             Dashboard
           </a>
-          <a href="#" className="text-gray-600 hover:text-green-500 font-medium">
+          <a href="#" className="font-medium text-gray-600 hover:text-green-500">
             Features
           </a>
-          <a href="#" className="text-gray-600 hover:text-green-500 font-medium">
+          <a href="#" className="font-medium text-gray-600 hover:text-green-500">
             Pricing
           </a>
-          <a href="#" className="text-gray-600 hover:text-green-500 font-medium">
+          <a href="#" className="font-medium text-gray-600 hover:text-green-500">
             Support
           </a>
         </nav>
@@ -40,13 +40,13 @@ const Navbar = () => {
         <div className="flex space-x-4">
           <button
             onClick={() => navigate("/signup")}
-            className="bg-transparent border border-green-500 text-green-500 hover:bg-green-500 hover:text-white font-medium py-2 px-4 rounded-lg transition duration-300"
+            className="px-4 py-2 font-medium text-green-500 transition duration-300 bg-transparent border border-green-500 rounded-lg hover:bg-green-500 hover:text-white"
           >
             Sign Up
           </button>
           <button
             onClick={() => navigate("/login")}
-            className="bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg transition duration-300"
+            className="px-4 py-2 font-medium text-white transition duration-300 bg-green-500 rounded-lg hover:bg-green-600"
           >
             Log In
           </button>
