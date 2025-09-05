@@ -156,12 +156,12 @@ function Signup() {
         await api.post("/auth/verify-phone-otp", {
           phone: formData.phone,
           otp,
-          Name: formData.name,
-          Password: formData.password,
+          UserName: formData.name,
+          password: formData.password,
         });
         alert("Account created successfully!");
       }
-      navigate("/login");
+      navigate("/farmer-dashboard");
     } catch (err) {
       setError(err.response?.data?.message || "OTP verification failed");
     } finally {

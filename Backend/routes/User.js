@@ -134,32 +134,98 @@ userRoute.post("/send-phone-otp", async (req, res) => {
 });
 
 
+// userRoute.post("/verify-phone-otp", async (req, res) => {
+//   try {
+//     const { phone, otp, name, password } = req.body;
+
+//     if (!phone || !otp) {
+//       return res.status(400).json({ message: "Phone and OTP are required" });
+//     }
+
+//     // 1. Find OTP record
+//     const record = await Otp.findOne({ phoneNumber: phone, otp }).sort({ expiresAt: -1 });
+//     if (!record) return res.status(400).json({ message: "Invalid OTP" });
+
+//     if (record.expiresAt.getTime() < Date.now()) {
+//       return res.status(400).json({ message: "OTP expired" });
+//     }
+
+//     // 2. Find existing user
+//     let user = await User.findOne({ phoneNumber: phone }); // ✅ FIX
+
+//     if (!user) {
+//       const hashedPassword = password ? await bcrypt.hash(password, 10) : undefined;
+
+//       user = new User({
+//         phoneNumber: phone, // ✅ FIX
+//         Name: name || "New User",
+//         Password: hashedPassword, // ✅ match your schema (capital P)
+//       });
+
+//       if (req.file) {
+//         user.profileImage = `/uploads/${req.file.filename}`;
+//       }
+
+//       await user.save();
+//     }
+
+//     // 3. Generate JWT
+//     const token = jwt.sign(
+//       { id: user._id, phone: user.phoneNumber }, // ✅ FIX
+//       process.env.JWT_TOKEN_KEY,
+//       { expiresIn: "7d" }
+//     );
+
+//     // 4. Clean up OTPs
+//     await Otp.deleteMany({ phoneNumber: phone });
+
+//     res.json({
+//       success: true,
+//       message: "Phone verified successfully",
+//       token,
+//       user: { id: user._id, phone: user.phoneNumber, name: user.Name },
+//     });
+//   } catch (err) {
+//     console.error("Verify Phone OTP Error:", err);
+//     res.status(500).json({ message: "OTP verification failed", error: err.message });
+//   }
+// }); 
+
+
+
 userRoute.post("/verify-phone-otp", async (req, res) => {
   try {
-    const { phone, otp, name, password } = req.body;
+    let { phone, otp, name, password } = req.body;
 
     if (!phone || !otp) {
       return res.status(400).json({ message: "Phone and OTP are required" });
     }
 
-    // 1. Find OTP record
-    const record = await Otp.findOne({ phoneNumber: phone, otp }).sort({ expiresAt: -1 });
+    // Ensure strings & trim
+    phone = phone.toString().trim();
+    otp = otp.toString().trim();
+
+    // 1. Find latest OTP record for this phone
+    const record = await Otp.findOne({ phoneNumber: phone, otp }).sort({ createdAt: -1 });
     if (!record) return res.status(400).json({ message: "Invalid OTP" });
 
+    // 2. Check expiry
     if (record.expiresAt.getTime() < Date.now()) {
       return res.status(400).json({ message: "OTP expired" });
     }
 
-    // 2. Find existing user
-    let user = await User.findOne({ phoneNumber: phone }); // ✅ FIX
-
+    // 3. Find or create user
+    let user = await User.findOne({ phoneNumber: phone });
     if (!user) {
-      const hashedPassword = password ? await bcrypt.hash(password, 10) : undefined;
+      if (!password) {
+        return res.status(400).json({ message: "Password is required for signup via phone" });
+      }
+      const hashedPassword = await bcrypt.hash(password, 10);
 
       user = new User({
-        phoneNumber: phone, // ✅ FIX
+        phoneNumber: phone,
         Name: name || "New User",
-        Password: hashedPassword, // ✅ match your schema (capital P)
+        Password: hashedPassword,
       });
 
       if (req.file) {
@@ -169,14 +235,14 @@ userRoute.post("/verify-phone-otp", async (req, res) => {
       await user.save();
     }
 
-    // 3. Generate JWT
+    // 4. Generate JWT
     const token = jwt.sign(
-      { id: user._id, phone: user.phoneNumber }, // ✅ FIX
+      { id: user._id, phone: user.phoneNumber },
       process.env.JWT_TOKEN_KEY,
       { expiresIn: "7d" }
     );
 
-    // 4. Clean up OTPs
+    // 5. Delete used OTP
     await Otp.deleteMany({ phoneNumber: phone });
 
     res.json({
@@ -190,6 +256,7 @@ userRoute.post("/verify-phone-otp", async (req, res) => {
     res.status(500).json({ message: "OTP verification failed", error: err.message });
   }
 });
+
 
 
 
