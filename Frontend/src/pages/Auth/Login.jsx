@@ -1,42 +1,36 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FcGoogle } from "react-icons/fc";
-import { MdEmail, MdLock, MdPersonOutline } from "react-icons/md";
+import { MdEmail, MdLock, MdPersonOutline, MdVisibility, MdVisibilityOff, MdArrowBack, MdSms } from "react-icons/md";
+import { FaLeaf, FaSeedling, FaTractor } from "react-icons/fa";
 import useAuth from "../../hooks/useAuth";
 import api from "../../services/api";
 
-function Login() {
+const Login = () => {
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
   const [UserEmail, setUserEmail] = useState("");
-  const [Password, setPassword] = useState("");
-  const [UserRole, setUserRole] = useState("farmer");
+  const [password, setPassword] = useState("");
   const [otp, setOtp] = useState("");
-  const [showOtp, setShowOtp] = useState(false);
-  const [forgotPasswordMode, setForgotPasswordMode] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const { login } = useAuth();
-  const navigate = useNavigate();
+  const [showOtp, setShowOtp] = useState(false);
+  const [forgotPasswordMode, setForgotPasswordMode] = useState(false);
 
-  // 🔹 Handle login
+  // normal login
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
-
     try {
-      const response = await api.post("/auth/login", {
-        UserEmail,
-        Password, 
-        UserRole,
-      });
-
-      if (UserRole === "farmer") {
-        await api.post("/auth/send-otp", { UserEmail }); 
+      const res = await api.post("/auth/login", { UserEmail, password });
+      if (res.data?.requireOtp) {
         setShowOtp(true);
       } else {
-        await login(response.data.token, UserRole);
-        navigate(UserRole === "admin" ? "/admin-dashboard" : "/farmer-dashboard");
+        login(res.data);
+        navigate("/farmer-dashboard");
       }
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
@@ -45,15 +39,14 @@ function Login() {
     }
   };
 
-  // 🔹 Handle OTP verification
+  // otp verify
   const handleOtpVerify = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
-
     try {
-      const response = await api.post("/auth/verify-otp", { UserEmail, otp });
-      login(response.data.token, "farmer");
+      const res = await api.post("/auth/verify-otp", { UserEmail, otp });
+      login(res.data);
       navigate("/farmer-dashboard");
     } catch (err) {
       setError(err.response?.data?.message || "OTP verification failed");
@@ -62,165 +55,169 @@ function Login() {
     }
   };
 
-  // 🔹 Handle forgot password
+  // forgot password
   const handleForgotPassword = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
-
     try {
-      await api.post("/auth/forgotPassword", { UserEmail });
-      alert("Password reset link sent to your email.");
+      const res = await api.post("/auth/forgotPassword", { UserEmail });
+      alert(res.data.message || "Password reset email sent");
       setForgotPasswordMode(false);
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to send reset link");
+      setError(err.response?.data?.message || "Failed to send reset email");
     } finally {
       setLoading(false);
     }
   };
 
+  // google login
   const handleGoogleLogin = () => {
     window.location.href = "http://localhost:5000/api/auth/google";
   };
 
   return (
-    <div className="min-h-screen bg-transparent flex items-center justify-center p-4">
-      <div className="w-full max-w-lg bg-white shadow-lg rounded-xl p-8 border border-green-200">
-        <h2 className="text-3xl font-bold text-center text-green-900 mb-8">
-          {forgotPasswordMode ? "Reset Password" : showOtp ? "Verify OTP" : "Welcome Back 🌾"}
-        </h2>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
+      <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
+        <h1 className="text-2xl font-bold text-center text-green-700 mb-6">
+          {forgotPasswordMode ? "Forgot Password" : showOtp ? "Verify OTP" : "Login"}
+        </h1>
 
-        <form
-          className="space-y-4"
-          onSubmit={
-            forgotPasswordMode
-              ? handleForgotPassword
-              : showOtp
-              ? handleOtpVerify
-              : handleLogin
-          }
-        >
-          {/* Email */}
-          <div className="relative">
-            <MdEmail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-600 text-2xl" />
+        {error && (
+          <div className="mb-4 text-red-600 text-sm font-medium text-center">
+            {error}
+          </div>
+        )}
+
+        {/* login form */}
+        {!forgotPasswordMode && !showOtp && (
+          <form onSubmit={handleLogin} className="space-y-4">
+            <input
+              type="email"
+              placeholder="Email"
+              value={UserEmail}
+              onChange={(e) => setUserEmail(e.target.value)}
+              required
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500"
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500"
+            />
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 disabled:opacity-50"
+            >
+              {loading ? "Logging in..." : "Login"}
+            </button>
+          </form>
+        )}
+
+        {/* otp form */}
+        {showOtp && (
+          <form onSubmit={handleOtpVerify} className="space-y-4">
+            <input
+              type="text"
+              placeholder="Enter OTP"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              required
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500"
+            />
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 disabled:opacity-50"
+            >
+              {loading ? "Verifying..." : "Verify OTP"}
+            </button>
+          </form>
+        )}
+
+        {/* forgot password form */}
+        {forgotPasswordMode && (
+          <form onSubmit={handleForgotPassword} className="space-y-4">
             <input
               type="email"
               placeholder="Enter your email"
               value={UserEmail}
               onChange={(e) => setUserEmail(e.target.value)}
-              className="w-full pl-12 pr-3 py-4 border border-green-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-500 text-xl"
               required
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500"
             />
-          </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 disabled:opacity-50"
+            >
+              {loading ? "Sending..." : "Send Reset Link"}
+            </button>
+          </form>
+        )}
 
-          {/* Password + Role */}
-          {!forgotPasswordMode && !showOtp && (
-            <>
-              <div className="relative">
-                <MdLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-600 text-2xl" />
-                <input
-                  type="password"
-                  placeholder="Enter your password"
-                  value={Password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-12 pr-3 py-4 border border-green-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-500 text-xl"
-                  required
-                />
-              </div>
-
-              <div className="relative">
-                <MdPersonOutline className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-600 text-2xl" />
-                <select
-                  value={UserRole}
-                  onChange={(e) => setUserRole(e.target.value)}
-                  className="w-full pl-12 pr-3 py-4 border border-green-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-500 text-xl"
-                >
-                  <option value="farmer">Farmer</option>
-                  <option value="admin">Admin</option>
-                </select>
-              </div>
-            </>
-          )}
-
-          {/* OTP */}
-          {showOtp && (
-            <div className="relative">
-              <MdLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-600 text-base" />
-              <input
-                type="text"
-                placeholder="Enter OTP sent to your email"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                className="w-full pl-10 pr-3 py-2 border border-green-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-500 text-sm"
-                required
-              />
-            </div>
-          )}
-
-          {/* Error */}
-          {error && <p className="text-red-600 text-center text-xs">{error}</p>}
-
-          {/* Submit */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-green-600 text-white py-4 rounded-lg hover:bg-green-700 transition duration-200 font-medium text-xl disabled:opacity-50"
-          >
-            {loading
-              ? "Processing..."
-              : forgotPasswordMode
-              ? "Send Reset Link"
-              : showOtp
-              ? "Verify OTP"
-              : "Login"}
-          </button>
-        </form>
-
-        {/* Extra actions */}
+        {/* extra buttons only for login screen */}
         {!forgotPasswordMode && !showOtp && (
           <>
             <div className="mt-4">
               <button
+                type="button"
                 onClick={handleGoogleLogin}
-                className="w-full flex items-center justify-center bg-white border border-green-300 py-4 rounded-lg hover:bg-green-50 transition duration-200 font-medium text-xl"
+                className="w-full flex items-center justify-center bg-white border border-green-300 py-3 rounded-lg hover:bg-green-50 transition"
               >
-                <FcGoogle className="mr-2 text-2xl" />
+                <FcGoogle className="mr-2 text-xl" />
                 Login with Google
               </button>
             </div>
 
-            <p className="mt-3 text-center text-gray-600 text-xs">
+            <div className="text-center mt-3">
               <button
-                onClick={() => setForgotPasswordMode(true)}
-                className="text-green-700 font-medium hover:underline text-xl"
+                type="button"
+                onClick={() => {
+                  setForgotPasswordMode(true);
+                  setError("");
+                  setShowOtp(false);
+                }}
+                className="text-sm font-semibold text-green-600 hover:text-green-700 hover:underline"
               >
-                Forgot Password?
+                Forgot your password?
               </button>
-            </p>
+            </div>
 
-            <p className="mt-3 text-center text-gray-600 text-xl">
-              Don’t have an account?{" "}
-              <Link to="/signup" className="text-green-700 font-medium hover:underline">
-                Sign Up
-              </Link>
-            </p>
+            <div className="pt-4 text-center border-t border-gray-200">
+              <p className="text-gray-600">
+                Don't have an account?{" "}
+                <Link
+                  to="/signup"
+                  className="font-bold text-green-600 hover:text-green-700 hover:underline"
+                >
+                  Create Account
+                </Link>
+              </p>
+            </div>
           </>
         )}
 
+        {/* back to login from forgot password */}
         {forgotPasswordMode && (
-          <p className="mt-3 text-center text-gray-600 text-xl">
+          <div className="mt-6 text-center">
             <button
+              type="button"
               onClick={() => setForgotPasswordMode(false)}
-              className="text-green-700 font-medium hover:underline"
+              className="text-green-600 font-semibold hover:underline"
             >
               Back to Login
             </button>
-          </p>
+          </div>
         )}
       </div>
     </div>
   );
-}
+};
 
 export default Login;
 

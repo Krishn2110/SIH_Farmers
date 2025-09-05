@@ -5,12 +5,20 @@ const userSchema = new mongoose.Schema(
     Name: {
       type: String,
       required: true,
-      unique: true,
     },
     email: {
       type: String,
-      required: true,
-      unique: true, 
+      required: function () {
+        return !this.phoneNumber; // email required only if no phone
+      },
+      unique: false, // keep false here to avoid conflict with phone
+    },
+    phoneNumber: {
+      type: String,
+      required: function () {
+        return !this.email; // phone required only if no email
+      },
+      unique: false,
     },
     Password: {
       type: String,
@@ -18,7 +26,6 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      required: true,
       default: "user",
     },
     isLogin: {
@@ -38,6 +45,14 @@ const userSchema = new mongoose.Schema(
   },
   { collection: "UserDetails" }
 );
+
+// ✅ Ensure at least one (email or phone) exists
+userSchema.pre("validate", function (next) {
+  if (!this.email && !this.phoneNumber) {
+    return next(new Error("Either email or phoneNumber is required"));
+  }
+  next();
+});
 
 const userDetails = mongoose.model("User", userSchema);
 
