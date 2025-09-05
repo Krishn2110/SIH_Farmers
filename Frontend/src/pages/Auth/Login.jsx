@@ -25,7 +25,8 @@ const Login = () => {
     setError("");
     setLoading(true);
     try {
-      const res = await api.post("/auth/login", { UserEmail, password });
+      const res = await api.post("/auth/login", { UserEmail, password ,Password: password,
+  UserRole: "farmer" });
       if (res.data?.requireOtp) {
         setShowOtp(true);
       } else {

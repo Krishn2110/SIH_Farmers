@@ -77,7 +77,7 @@ function Signup() {
         alert("OTP sent to your email. Please verify to complete signup.");
         navigate("/login");
       } else {
-        await api.post("/auth/send-phone-otp", { phoneNumber: formData.phone });
+        await api.post("/auth/send-phone-otp", { phone: formData.phone });
         
 
         setShowOtp(true);
