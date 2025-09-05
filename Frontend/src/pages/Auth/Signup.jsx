@@ -64,9 +64,9 @@ function Signup() {
     try {
       if (signupMethod === "email") {
         const data = new FormData();
-        data.append("name", formData.name);
-        data.append("email", formData.email);
-        data.append("password", formData.password);
+        data.append("UserName", formData.name);
+        data.append("UserEmail", formData.email);
+        data.append("Password", formData.password);
         if (profileImage) data.append("profileImage", profileImage);
 
         await api.post("/auth/signup", data, {
@@ -75,7 +75,8 @@ function Signup() {
 
         await api.post("/auth/send-otp", { UserEmail: formData.email });
         alert("OTP sent to your email. Please verify to complete signup.");
-        navigate("/login");
+        // navigate("/login");
+        setShowOtp(true);
       } else {
         await api.post("/auth/send-phone-otp", { phone: formData.phone });
         
@@ -89,28 +90,38 @@ function Signup() {
     }
   };
 
-  // Handle OTP verification
-  const handleOtpVerify = async (e) => {
-  e.preventDefault();
-  setError("");
-  setLoading(true);
 
-  try {
-    await api.post("/auth/verify-phone-otp", {
-      phone: formData.phone,
-      otp,
-      name: formData.name,
-      password: formData.password,
-    });
-
-    alert("Account created successfully! Please login.");
-    navigate("/login");
-  } catch (err) {
-    setError(err.response?.data?.message || "OTP verification failed");
-  } finally {
-    setLoading(false);
-  }
-};
+const handleOtpVerify = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    try {
+      if (signupMethod === "email") {
+        // Email OTP
+        const res = await api.post("/auth/verify-otp", {
+          UserEmail: formData.email,
+          otp,
+        });
+        alert("Account created successfully!");
+        // Optionally, auto-login
+        login(res.data.token, res.data.user);
+      } else {
+        // Phone OTP
+        await api.post("/auth/verify-phone-otp", {
+          phone: formData.phone,
+          otp,
+          Name: formData.name,
+          Password: formData.password,
+        });
+        alert("Account created successfully!");
+      }
+      navigate("/login");
+    } catch (err) {
+      setError(err.response?.data?.message || "OTP verification failed");
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
   // Google signup
