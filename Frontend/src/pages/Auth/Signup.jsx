@@ -56,20 +56,54 @@ function Signup() {
   }, []);
 
   // Handle Signup
+  // const handleSignup = async (e) => {
+  //   e.preventDefault();
+  //   setError("");
+
+  //   if (
+  //     !formData.name ||
+  //     (signupMethod === "email" && !formData.email) ||
+  //     (signupMethod === "phone" && !formData.phone) ||
+  //     !formData.password
+  //   ) {
+  //     setError("Please fill all required fields");
+  //     return;
+  //   }
+
+  //   setLoading(true);
+
+  //   try {
+  //     if (signupMethod === "email") {
+  //       const data = new FormData();
+  //       data.append("UserName", formData.name);
+  //       data.append("UserEmail", formData.email);
+  //       data.append("Password", formData.password);
+  //       if (profileImage) data.append("profileImage", profileImage);
+
+  //       await api.post("/auth/signup", data, {
+  //         headers: { "Content-Type": "multipart/form-data" },
+  //       });
+
+  //       await api.post("/auth/send-otp", { UserEmail: formData.email });
+  //       alert("OTP sent to your email. Please verify.");
+  //       navigate("/login");
+  //     } else {
+  //       await api.post("/auth/send-phone-otp", { phoneNumber: formData.phone });
+  //       setShowOtp(true);
+  //       alert("OTP sent to your phone");
+  //     }
+  //   } catch (err) {
+  //     setError(err.response?.data?.message || "Signup failed");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+
+
   const handleSignup = async (e) => {
     e.preventDefault();
     setError("");
-
-    if (
-      !formData.name ||
-      (signupMethod === "email" && !formData.email) ||
-      (signupMethod === "phone" && !formData.phone) ||
-      !formData.password
-    ) {
-      setError("Please fill all required fields");
-      return;
-    }
-
     setLoading(true);
 
     try {
@@ -89,9 +123,10 @@ function Signup() {
         // navigate("/login");
         setShowOtp(true);
       } else {
-        await api.post("/auth/send-phone-otp", { phoneNumber: formData.phone });
+        await api.post("/auth/send-phone-otp", { phone: formData.phone });
+        
+
         setShowOtp(true);
-        alert("OTP sent to your phone");
       }
     } catch (err) {
       setError(err.response?.data?.message || "Signup failed");
@@ -101,7 +136,8 @@ function Signup() {
   };
 
 
-const handleOtpVerify = async (e) => {
+  // Handle OTP verification
+ const handleOtpVerify = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
@@ -125,23 +161,6 @@ const handleOtpVerify = async (e) => {
         });
         alert("Account created successfully!");
       }
-      navigate("/login");
-    } catch (err) {
-      setError(err.response?.data?.message || "OTP verification failed");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-    try {
-      await api.post("/auth/verify-phone-otp", {
-        phone: formData.phone,
-        otp,
-        name: formData.name,
-        password: formData.password,
-      });
-
-      alert("Account created successfully! Please login.");
       navigate("/login");
     } catch (err) {
       setError(err.response?.data?.message || "OTP verification failed");
@@ -477,6 +496,6 @@ const handleOtpVerify = async (e) => {
       </div>
     </div>
   );
-
+}
 
 export default Signup;
