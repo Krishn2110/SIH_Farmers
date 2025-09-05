@@ -86,7 +86,9 @@ function Signup() {
 
         await api.post("/auth/send-otp", { UserEmail: formData.email });
         alert("OTP sent to your email. Please verify.");
-        navigate("/login");
+        alert("Account created successfully!");
+        navigate("/farmer-dashboard");
+
       } else {
         await api.post("/auth/send-phone-otp", { phoneNumber: formData.phone });
         setShowOtp(true);
@@ -120,7 +122,8 @@ function Signup() {
       });
 
       alert("Account created successfully! Please login.");
-      navigate("/login");
+      alert("Account created successfully!");
+      navigate("/farmer-dashboard");
     } catch (err) {
       setError(err.response?.data?.message || "OTP verification failed");
     } finally {
