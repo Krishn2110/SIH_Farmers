@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import OAuthSuccess from "./pages/Auth/OAuthSuccess";
 import Profile from "./pages/Profile";
 import Dashboard from "./pages/Dashboard";
+import Prediction from "./pages/Prediction";
 
 function App() {
   return (
@@ -15,7 +16,8 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/oauth-success" element={<OAuthSuccess />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/Dashboard" element={<Dashboard />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/prediction" element={<Prediction />} />
       </Routes>
     </Router>
   );
