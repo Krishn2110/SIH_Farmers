@@ -1,6 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { FcGoogle } from "react-icons/fc";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import {
   MdPerson,
   MdEmail,
@@ -55,51 +57,6 @@ function Signup() {
     return () => clearInterval(interval);
   }, []);
 
-  // Handle Signup
-  // const handleSignup = async (e) => {
-  //   e.preventDefault();
-  //   setError("");
-
-  //   if (
-  //     !formData.name ||
-  //     (signupMethod === "email" && !formData.email) ||
-  //     (signupMethod === "phone" && !formData.phone) ||
-  //     !formData.password
-  //   ) {
-  //     setError("Please fill all required fields");
-  //     return;
-  //   }
-
-  //   setLoading(true);
-
-  //   try {
-  //     if (signupMethod === "email") {
-  //       const data = new FormData();
-  //       data.append("UserName", formData.name);
-  //       data.append("UserEmail", formData.email);
-  //       data.append("Password", formData.password);
-  //       if (profileImage) data.append("profileImage", profileImage);
-
-  //       await api.post("/auth/signup", data, {
-  //         headers: { "Content-Type": "multipart/form-data" },
-  //       });
-
-  //       await api.post("/auth/send-otp", { UserEmail: formData.email });
-  //       alert("OTP sent to your email. Please verify.");
-  //       navigate("/login");
-  //     } else {
-  //       await api.post("/auth/send-phone-otp", { phoneNumber: formData.phone });
-  //       setShowOtp(true);
-  //       alert("OTP sent to your phone");
-  //     }
-  //   } catch (err) {
-  //     setError(err.response?.data?.message || "Signup failed");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -119,17 +76,17 @@ function Signup() {
         });
 
         await api.post("/auth/send-otp", { UserEmail: formData.email });
-        alert("OTP sent to your email. Please verify to complete signup.");
+        toast.success("OTP sent to your email. Please verify to complete signup.");
         // navigate("/login");
         setShowOtp(true);
       } else {
         await api.post("/auth/send-phone-otp", { phone: formData.phone });
-        
-
+        toast.success("OTP sent to your phone.");
         setShowOtp(true);
       }
     } catch (err) {
       setError(err.response?.data?.message || "Signup failed");
+      toast.error(err.response?.data?.message || "Signup failed");
     } finally {
       setLoading(false);
     }
@@ -148,7 +105,7 @@ function Signup() {
           UserEmail: formData.email,
           otp,
         });
-        alert("Account created successfully!");
+        toast.success("Account created successfully!");
         // Optionally, auto-login
         login(res.data.token, res.data.user);
               navigate("/farmer-dashboard");  
@@ -158,19 +115,15 @@ function Signup() {
         await api.post("/auth/verify-phone-otp", {
           phone: formData.phone,
           otp,
-          Name: formData.name,
-          Password: formData.password,
+          UserName: formData.name,
+          password: formData.password,
         });
-        alert("Account created successfully!");
-              if (res.data?.token && res.data?.user) {
-        login(res.data.token, res.data.user);
+        toast.success("Account created successfully!");
       }
-            navigate("/farmer-dashboard");
-
-      }
-
+      navigate("/farmer-dashboard");
     } catch (err) {
       setError(err.response?.data?.message || "OTP verification failed");
+      toast.error(err.response?.data?.message || "OTP verification failed");
     } finally {
       setLoading(false);
     }
@@ -183,6 +136,9 @@ function Signup() {
 
   return (
     <div className="relative h-screen overflow-hidden bg-white">
+
+     <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
+
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute w-32 h-32 bg-transparent rounded-full top-20 right-20"></div>
@@ -204,17 +160,17 @@ function Signup() {
                 <div className="inline-flex items-center justify-center mb-3 shadow-lg w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl">
                   <FaSeedling className="text-xl text-white" />
                 </div>
-                <h1 className="mb-1 text-2xl font-bold text-gray-800">
+                <h1 className="mb-1 text-2xl font-bold text-gray-800 poppins-bold">
                   Join the Farming Revolution
                 </h1>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 poppins-semibold">
                   Create your account and start your journey
                 </p>
               </div>
 
               {/* Toggle Email/Phone */}
               {!showOtp && (
-                <div className="relative z-10 mb-4">
+                <div className="relative z-10 mb-4 poppins-semibold">
                   <div className="flex p-1 bg-gray-100 rounded-xl">
                     <button
                       type="button"
@@ -230,7 +186,7 @@ function Signup() {
                       }`}
                     >
                       <div className="flex items-center justify-center">
-                        <MdEmail className="mr-1 text-base" /> Email
+                        <MdEmail className="mr-1 text-base poppins-semibold" /> Email
                       </div>
                     </button>
                     <button
@@ -256,7 +212,7 @@ function Signup() {
 
               {/* Form */}
               <form
-                className="relative z-10 space-y-4"
+                className="relative z-10 space-y-4 poppins-semibold"
                 onSubmit={showOtp ? handleOtpVerify : handleSignup}
               >
                 {/* Full Name */}
@@ -289,7 +245,7 @@ function Signup() {
                 {/* Email / Phone */}
                 {!showOtp && (
                   <div>
-                    <label className="text-xs font-semibold tracking-wide text-gray-700 uppercase">
+                    <label className="text-xs tracking-wide text-gray-700 uppercase poppins-semibold">
                       {signupMethod === "email" ? "Email Address" : "Phone Number"}
                     </label>
                     <div className="relative group">
@@ -346,7 +302,7 @@ function Signup() {
                     <label className="text-xs font-semibold tracking-wide text-gray-700 uppercase">
                       Verification Code
                     </label>
-                    <div className="relative group">
+                    <div className="relative poppins-semibold group">
                       <div className="absolute inset-y-0 left-0 z-10 flex items-center pl-3">
                         <MdSms
                           className={`text-lg ${
@@ -440,7 +396,7 @@ function Signup() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-2.5 px-6 text-sm font-bold text-white bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl hover:from-green-700 hover:to-emerald-700 disabled:opacity-50 transition-all shadow-lg hover:shadow-xl"
+                  className="w-full py-2.5 px-6 text-sm poppins-semibold text-white bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl hover:from-green-700 hover:to-emerald-700 disabled:opacity-50 transition-all shadow-lg hover:shadow-xl"
                 >
                   {loading
                     ? "Processing..."
@@ -472,7 +428,7 @@ function Signup() {
                     onClick={handleGoogleLogin}
                     className="w-full py-2.5 px-6 text-sm font-semibold text-gray-700 bg-white border-2 border-gray-200 rounded-xl hover:bg-gray-50 flex items-center justify-center shadow-md hover:shadow-lg"
                   >
-                    <FcGoogle className="mr-2 text-xl" />
+                    <FcGoogle className="mr-2 text-xl poppins-semibold" />
                     Continue with Google
                   </button>
                   <div className="pt-3 text-center border-t border-gray-200">
@@ -506,3 +462,6 @@ function Signup() {
 }
 
 export default Signup;
+
+
+

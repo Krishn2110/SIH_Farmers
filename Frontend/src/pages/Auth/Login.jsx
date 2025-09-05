@@ -6,6 +6,8 @@ import { FaLeaf, FaSeedling, FaTractor } from "react-icons/fa";
 import useAuth from "../../hooks/useAuth";
 import api from "../../services/api";
 import loginImage from "../../assets/images/loginimg.jpg";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -36,6 +38,7 @@ const [showPassword, setShowPassword] = useState(false); // also needed since yo
       }
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
+      toast.error(err.response?.data?.message || "Login failed");
     } finally {
       setLoading(false);
     }
@@ -52,6 +55,7 @@ const [showPassword, setShowPassword] = useState(false); // also needed since yo
       navigate("/farmer-dashboard");
     } catch (err) {
       setError(err.response?.data?.message || "OTP verification failed");
+      toast.error(err.response?.data?.message || "OTP verification failed");
     } finally {
       setLoading(false);
     }
