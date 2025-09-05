@@ -108,6 +108,8 @@ function Signup() {
         toast.success("Account created successfully!");
         // Optionally, auto-login
         login(res.data.token, res.data.user);
+              navigate("/farmer-dashboard");  
+
       } else {
         // Phone OTP
         await api.post("/auth/verify-phone-otp", {
@@ -133,7 +135,7 @@ function Signup() {
   };
 
   return (
-    <div className="relative h-screen  overflow-hidden bg-white">
+    <div className="relative h-screen overflow-hidden bg-white">
 
      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
 
@@ -158,17 +160,17 @@ function Signup() {
                 <div className="inline-flex items-center justify-center mb-3 shadow-lg w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl">
                   <FaSeedling className="text-xl text-white" />
                 </div>
-                <h1 className="mb-1 poppins-bold text-2xl font-bold text-gray-800">
+                <h1 className="mb-1 text-2xl font-bold text-gray-800 poppins-bold">
                   Join the Farming Revolution
                 </h1>
-                <p className="text-sm poppins-semibold text-gray-600">
+                <p className="text-sm text-gray-600 poppins-semibold">
                   Create your account and start your journey
                 </p>
               </div>
 
               {/* Toggle Email/Phone */}
               {!showOtp && (
-                <div className="relative z-10 poppins-semibold mb-4">
+                <div className="relative z-10 mb-4 poppins-semibold">
                   <div className="flex p-1 bg-gray-100 rounded-xl">
                     <button
                       type="button"
@@ -184,7 +186,7 @@ function Signup() {
                       }`}
                     >
                       <div className="flex items-center justify-center">
-                        <MdEmail className="mr-1 poppins-semibold text-base" /> Email
+                        <MdEmail className="mr-1 text-base poppins-semibold" /> Email
                       </div>
                     </button>
                     <button
@@ -210,7 +212,7 @@ function Signup() {
 
               {/* Form */}
               <form
-                className="relative poppins-semibold z-10 space-y-4"
+                className="relative z-10 space-y-4 poppins-semibold"
                 onSubmit={showOtp ? handleOtpVerify : handleSignup}
               >
                 {/* Full Name */}
@@ -243,7 +245,7 @@ function Signup() {
                 {/* Email / Phone */}
                 {!showOtp && (
                   <div>
-                    <label className="text-xs poppins-semibold  tracking-wide text-gray-700 uppercase">
+                    <label className="text-xs tracking-wide text-gray-700 uppercase poppins-semibold">
                       {signupMethod === "email" ? "Email Address" : "Phone Number"}
                     </label>
                     <div className="relative group">
