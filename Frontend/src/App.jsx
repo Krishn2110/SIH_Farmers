@@ -3,6 +3,7 @@ import Login from "./pages/Auth/Login";
 import Signup from "./pages/Auth/Signup";
 import Home from "./pages/Home";
 import OAuthSuccess from "./pages/Auth/OAuthSuccess";
+import Prediction from "./pages/Prediction";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/oauth-success" element={<OAuthSuccess />} />
+        <Route path="/prediction" element={<Prediction />} />
       </Routes>
     </Router>
   );
