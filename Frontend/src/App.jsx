@@ -3,6 +3,7 @@ import Login from "./pages/Auth/Login";
 import Signup from "./pages/Auth/Signup";
 import Home from "./pages/Home";
 import OAuthSuccess from "./pages/Auth/OAuthSuccess";
+<<<<<<< HEAD
 import Prediction from "./pages/Prediction";
 import FarmerDashboard from "./pages/farmer/FarmerDashboard";
 
@@ -16,6 +17,10 @@ const ProtectedRoute = ({ children }) => {
 
   return children;
 };
+=======
+import Profile from "./pages/Profile";
+import Dashboard from "./pages/Dashboard";
+>>>>>>> 64d327245bea35fed88497cf346800dd067dc679
 
 function App() {
   return (
@@ -26,6 +31,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/oauth-success" element={<OAuthSuccess />} />
+<<<<<<< HEAD
 
         {/* Protected Routes */}
         <Route
@@ -44,6 +50,10 @@ function App() {
             </ProtectedRoute>
           }
         />
+=======
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/Dashboard" element={<Dashboard />} />
+>>>>>>> 64d327245bea35fed88497cf346800dd067dc679
       </Routes>
     </Router>
   );

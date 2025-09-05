@@ -114,10 +114,10 @@ const [showPassword, setShowPassword] = useState(false); // also needed since yo
                 <div className="inline-flex items-center justify-center mb-3 shadow-lg w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl">
                   <FaSeedling className="text-xl text-white" />
                 </div>
-                <h1 className="mb-1 text-2xl font-bold text-gray-800">
+                <h1 className="mb-1 text-2xl poppins-bold font-bold text-gray-800">
                   {forgotPasswordMode ? "Forgot Password" : showOtp ? "Verify OTP" : "Welcome Back"}
                 </h1>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 poppins-semibold">
                   {forgotPasswordMode ? "Reset your password" : showOtp ? "Enter your OTP" : "Login to continue your journey"}
                 </p>
               </div>
@@ -134,7 +134,7 @@ const [showPassword, setShowPassword] = useState(false); // also needed since yo
               {!forgotPasswordMode && !showOtp && (
                 <form onSubmit={handleLogin} className="relative z-10 space-y-4">
                   <div>
-                    <label className="text-xs font-semibold tracking-wide text-gray-700 uppercase">
+                    <label className="text-xs poppins-semibold font-semibold tracking-wide text-gray-700 uppercase">
                       Email Address
                     </label>
                     <div className="relative group">
@@ -153,12 +153,12 @@ const [showPassword, setShowPassword] = useState(false); // also needed since yo
                         onFocus={() => setFocusedField("email")}
                         onBlur={() => setFocusedField("")}
                         required
-                        className="w-full py-2 pl-10 pr-3 text-sm border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                        className="w-full poppins-regular py-2 pl-10 pr-3 text-sm border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500"
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="text-xs font-semibold tracking-wide text-gray-700 uppercase">
+                    <label className="text-xs poppins-semibold tracking-wide text-gray-700 uppercase">
                       Password
                     </label>
                     <div className="relative group">
@@ -177,7 +177,7 @@ const [showPassword, setShowPassword] = useState(false); // also needed since yo
                         onFocus={() => setFocusedField("password")}
                         onBlur={() => setFocusedField("")}
                         required
-                        className="w-full py-2 pl-10 pr-10 text-sm border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                        className="w-full py-2 poppins-regular pl-10 pr-10 text-sm border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500"
                       />
                       <button
                         type="button"
@@ -191,7 +191,7 @@ const [showPassword, setShowPassword] = useState(false); // also needed since yo
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full py-2.5 px-6 text-sm font-bold text-white bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl hover:from-green-700 hover:to-emerald-700 disabled:opacity-50 transition-all shadow-lg hover:shadow-xl"
+                    className="w-full py-2.5 px-6 poppins-semibold text-sm font-bold text-white bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl hover:from-green-700 hover:to-emerald-700 disabled:opacity-50 transition-all shadow-lg hover:shadow-xl"
                   >
                     {loading ? "Logging in..." : "Login"}
                   </button>
@@ -278,7 +278,7 @@ const [showPassword, setShowPassword] = useState(false); // also needed since yo
                   <button
                     type="button"
                     onClick={handleGoogleLogin}
-                    className="w-full py-2.5 px-6 text-sm font-semibold text-gray-700 bg-white border-2 border-gray-200 rounded-xl hover:bg-gray-50 flex items-center justify-center shadow-md hover:shadow-lg"
+                    className="w-full poppins-semibold py-2.5 px-6 text-sm font-semibold text-gray-700 bg-white border-2 border-gray-200 rounded-xl hover:bg-gray-50 flex items-center justify-center shadow-md hover:shadow-lg"
                   >
                     <FcGoogle className="mr-2 text-xl" />
                     Login with Google
@@ -291,7 +291,7 @@ const [showPassword, setShowPassword] = useState(false); // also needed since yo
                         setError("");
                         setShowOtp(false);
                       }}
-                      className="text-sm font-semibold text-green-600 hover:text-green-700 hover:underline"
+                      className="text-sm poppins-semibold text-green-600 hover:text-green-700 hover:underline"
                     >
                       Forgot your password?
                     </button>
@@ -301,7 +301,7 @@ const [showPassword, setShowPassword] = useState(false); // also needed since yo
                       Don't have an account?{" "}
                       <Link
                         to="/signup"
-                        className="font-bold text-green-600 hover:text-green-700 hover:underline"
+                        className="poppins-semibold text-green-600 hover:text-green-700 hover:underline"
                       >
                         Create Account
                       </Link>
@@ -316,7 +316,7 @@ const [showPassword, setShowPassword] = useState(false); // also needed since yo
                   <button
                     type="button"
                     onClick={() => setForgotPasswordMode(false)}
-                    className="font-semibold text-green-600 hover:underline"
+                    className="poppins-semibold text-green-600 hover:underline"
                   >
                     Back to Login
                   </button>

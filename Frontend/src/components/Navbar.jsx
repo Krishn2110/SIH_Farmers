@@ -30,7 +30,7 @@ const Navbar = () => {
           <h1 className="text-2xl font-bold text-gray-900">KishanMitra</h1>
         </div>
 
-        {/* Navigation Menu */}
+        {/* Navigation Menu with animations */}
         <nav className="hidden space-x-8 md:flex">
           <button
             onClick={() => navigate("/")}
