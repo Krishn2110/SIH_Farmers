@@ -32,7 +32,7 @@ const [showPassword, setShowPassword] = useState(false); // also needed since yo
         setShowOtp(true);
       } else {
         login(res.data);
-        navigate("/farmer-dashboard");
+        navigate("/");
       }
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");

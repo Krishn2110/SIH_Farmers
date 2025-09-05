@@ -151,6 +151,8 @@ function Signup() {
         alert("Account created successfully!");
         // Optionally, auto-login
         login(res.data.token, res.data.user);
+              navigate("/farmer-dashboard");  
+
       } else {
         // Phone OTP
         await api.post("/auth/verify-phone-otp", {
@@ -160,8 +162,13 @@ function Signup() {
           Password: formData.password,
         });
         alert("Account created successfully!");
+              if (res.data?.token && res.data?.user) {
+        login(res.data.token, res.data.user);
       }
-      navigate("/login");
+            navigate("/farmer-dashboard");
+
+      }
+
     } catch (err) {
       setError(err.response?.data?.message || "OTP verification failed");
     } finally {
