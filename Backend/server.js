@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+dotenv.config();
 import mongoose from "mongoose";
 import cors from "cors";
 import bodyParser from "body-parser";
@@ -10,7 +11,7 @@ import userRoute from "./routes/User.js";
 import connectDB from "./config/mongo.js";
 import feedbackRoutes from "./routes/feedbackRoutes.js";
 
-dotenv.config();
+
 
 const app = express();
 

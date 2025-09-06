@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import { MessageCircle } from "lucide-react";
 import heroImg from "../../assets/hero_img.jpg";
 import farmer1 from "../../assets/farmer1.jpg";
 import farmer2 from "../../assets/farmer2.jpg";
@@ -12,6 +13,7 @@ import databaseImg from "../../assets/database.jpg";
 import Navbar from "../../components/Navbar";
 import { useAuth } from "../../context/AuthContext";
 import Footer from "../../components/Footer";
+import ChatbotWidget from "../../components/ChatbotWidget";
 
 const FarmerDashboard = () => {
   const navigate = useNavigate();
@@ -36,6 +38,9 @@ const FarmerDashboard = () => {
   const [typingSpeed, setTypingSpeed] = useState(150);
   
   const { isAuthenticated } = useAuth();
+  
+  // Chatbot state
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
   
   // Text for typing effect
   const texts = ["Precision", "AI Technology", "Data Insights", "Smart Farming"];
@@ -250,7 +255,7 @@ const FarmerDashboard = () => {
       </section>
 
       {/* Features / Insights Section */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-white">
         <div className="container px-4 mx-auto">
           <h2 className="mb-4 text-3xl font-bold text-center text-gray-900 poppins-bold">Empowering Farmers with Data-Driven Insights</h2>
           <p className="max-w-2xl mx-auto mb-16 text-center text-gray-600 poppins-light">
@@ -428,7 +433,7 @@ const FarmerDashboard = () => {
       </section>
 
       {/* About Us Section */}
-      <section id="about" className="py-20 bg-gray-50">
+      <section id="about" className="py-20 bg-white">
         <div className="container px-4 mx-auto">
           <div className={`flex flex-col md:flex-row items-center transition-all duration-1000 ${isVisible.about ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             <div className="mb-10 md:w-1/2 md:mb-0 md:pr-10">
@@ -486,6 +491,23 @@ const FarmerDashboard = () => {
 
       {/* Footer */}
       <Footer />
+
+      {/* Floating Chatbot Button */}
+      {!isChatbotOpen && (
+        <button
+          onClick={() => setIsChatbotOpen(true)}
+          className="fixed bottom-6 right-6 bg-[#097A4E] hover:bg-green-600 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110 z-40"
+          aria-label="Open farming assistant chat"
+        >
+          <MessageCircle size={24} />
+        </button>
+      )}
+
+      {/* Chatbot Widget */}
+      <ChatbotWidget 
+        isOpen={isChatbotOpen} 
+        onClose={() => setIsChatbotOpen(false)} 
+      />
 
       {/* Add blink animation */}
       <style>

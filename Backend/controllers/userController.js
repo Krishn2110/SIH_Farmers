@@ -3,17 +3,26 @@ import bcrypt from "bcryptjs";
 import userDetails from "../models/UserModel.js";
 import Otp from "../models/Otp.js";
 import nodemailer from "nodemailer";
+import Profile from "../models/Profile.js";
 
 // 🔹 JWT Token Creator
+// const createToken = (user) => {
+//   return jwt.sign(
+//     {
+//       id: user._id,
+//       email: user.email,
+//       name: user.Name,
+//     },
+//     process.env.JWT_TOKEN_KEY,
+//     { expiresIn: "1h" }
+//   );
+// };
+
 const createToken = (user) => {
   return jwt.sign(
-    {
-      id: user._id,
-      email: user.email,
-      name: user.Name,
-    },
+    { id: user._id, email: user.email, name: user.Name, role: user.role || "user" },
     process.env.JWT_TOKEN_KEY,
-    { expiresIn: "1h" }
+    { expiresIn: "8h" }
   );
 };
 
@@ -25,6 +34,57 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS,
   },
 });
+
+// const signup = async (req, res) => {
+//   try {
+//     const { UserName, UserEmail, Password } = req.body;
+//     if (!UserName || !UserEmail || !Password) {
+//       return res.status(400).json({ message: "Please fill all details" });
+//     }
+
+//     const existingUser = await userDetails.findOne({ email: UserEmail });
+//     if (existingUser) {
+//       return res.status(400).json({ message: "User already exists" });
+//     }
+
+//     const hashedPassword = await bcrypt.hash(Password, 13);
+
+//     const userData = {
+//       Name: UserName,
+//       email: UserEmail,
+//       Password: hashedPassword,
+//     };
+
+//     // Add profile image if uploaded
+//     if (req.file) {
+//       userData.profileImage = `/uploads/${req.file.filename}`;
+//     }
+
+//     const user = await userDetails.create(userData);
+
+//     // 🔹 Generate OTP
+//     const otp = Math.floor(100000 + Math.random() * 900000).toString();
+//     const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+
+//     await Otp.create({ email: UserEmail, otp, expiresAt });
+
+//     // 🔹 Send OTP Email
+//     await transporter.sendMail({
+//       from: `"Agri App 🌾" <${process.env.EMAIL_USER}>`,
+//       to: UserEmail,
+//       subject: "Verify Your Account - OTP",
+//       html: `<h3>Your OTP is: <b>${otp}</b></h3><p>Expires in 5 minutes.</p>`,
+//     });
+
+//     return res.status(200).json({
+//       success: true,
+//       message: "Signup successful. Please verify OTP sent to email.",
+//     });
+//   } catch (e) {
+//     return res.status(500).json({ message: "Server Error!", error: e.message });
+//   }
+// };
+
 
 const signup = async (req, res) => {
   try {
@@ -53,10 +113,30 @@ const signup = async (req, res) => {
 
     const user = await userDetails.create(userData);
 
+    // 🔹 Create Profile document immediately
+    const profileData = {
+      _id: user._id, // link profile with user _id
+      Name: user.Name,
+      email: user.email,
+      phone: user.phoneNumber || null,
+      role: user.role || "user",
+      title: "Farmer",
+      location: "India",
+      farmsManaged: "1 farm",
+      experienceYears: "1+ years",
+      crops: [],
+      profileImage: user.profileImage || null,
+      joinDate: new Date().toLocaleString("en-IN", { month: "long", year: "numeric" }),
+      loginHistory: [],
+      lastLogin: null,
+      isLogin: false,
+    };
+
+    await Profile.create(profileData);
+
     // 🔹 Generate OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
-
     await Otp.create({ email: UserEmail, otp, expiresAt });
 
     // 🔹 Send OTP Email
@@ -76,47 +156,82 @@ const signup = async (req, res) => {
   }
 };
 
+
+
+
+
 // const login = async (req, res) => {
 //   try {
 //     const { UserEmail, Password, UserRole } = req.body;
 
-// const user = await userDetails.findOne({ email: UserEmail });
-// if (!user) return res.status(404).json({ message: "User not found" });
+//     const user = await userDetails.findOne({ email: UserEmail });
+//     if (!user) return res.status(404).json({ message: "User not found" });
 
-// const ComparePassword = await bcrypt.compare(Password, user.Password);
-// if (!ComparePassword)
-//   return res.status(401).json({ message: "Invalid password" });
+//     const isPasswordValid = await bcrypt.compare(Password, user.Password);
+//     if (!isPasswordValid) return res.status(401).json({ message: "Invalid password" });
 
+//     // Farmer OTP login
 //     if (UserRole === "farmer") {
-//   const otp = Math.floor(100000 + Math.random() * 900000).toString();
-//   const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+//       const otp = Math.floor(100000 + Math.random() * 900000).toString();
+//       const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+//       await Otp.create({ email: UserEmail, otp, expiresAt });
 
-//   await Otp.create({ email: UserEmail, otp, expiresAt });
+//       await transporter.sendMail({
+//         from: `"Agri App 🌾" <${process.env.EMAIL_USER}>`,
+//         to: UserEmail,
+//         subject: "Login OTP",
+//         html: `<h3>Your Login OTP is: <b>${otp}</b></h3><p>Expires in 5 minutes.</p>`,
+//       });
 
-//   await transporter.sendMail({
-//     from: `"Agri App 🌾" <${process.env.EMAIL_USER}>`,
-//     to: UserEmail,
-//     subject: "Login OTP",
-//     html: `<h3>Your Login OTP is: <b>${otp}</b></h3><p>Expires in 5 minutes.</p>`,
-//   });
+//       return res.status(200).json({ message: "OTP sent for login", requireOtp: true });
+//     }
 
-//   return res.status(200).json({ 
-//     message: "OTP sent for login",
-//     requireOtp: true 
-//   });
-// }
+//     // Update Profile: lastLogin and loginHistory
+//     const profile = await Profile.findById(mongoose.Types.ObjectId(user._id));
 
+//     if (!profile) {
+//       console.error("Profile not found for user:", user._id);
+//       return res.status(404).json({ message: "Profile not found" });
+//     }
 
-//     // 🔹 Admin direct login
+//     const previousLogin = profile.lastLogin || null;
+//     const now = new Date();
+//     const formattedDate = now.toLocaleDateString("en-IN");
+//     const formattedTime = now.toLocaleTimeString("en-IN");
+
+//     profile.lastLogin = now;
+//     profile.isLogin = true;
+//     profile.loginHistory.push({ date: formattedDate, time: formattedTime });
+
+//     // Keep last 10 login entries
+//     if (profile.loginHistory.length > 10) profile.loginHistory.shift();
+
+//     await profile.save();
+//     console.log("Profile updated:", profile);
+
+//     // Generate JWT
 //     const token = createToken(user);
-//     return res.status(200).json({
+
+//     res.status(200).json({
+//       success: true,
 //       message: "Login successful",
 //       token,
-//       role: user.role,
-//       user: { name: user.Name, email: user.email },
+//       user: {
+//         id: profile._id,
+//         name: profile.Name,
+//         email: profile.email,
+//         phone: profile.phone,
+//         role: profile.role,
+//         profileImage: profile.profileImage,
+//         lastLogin: previousLogin,
+//         currentLogin: profile.lastLogin,
+//         loginHistory: profile.loginHistory,
+//       }
 //     });
+
 //   } catch (e) {
-//     return res.status(500).json({ message: "Server Error", error: e.message });
+//     console.error("Login error:", e);
+//     res.status(500).json({ message: "Server error", error: e.message });
 //   }
 // };
 
@@ -127,10 +242,10 @@ const login = async (req, res) => {
     const user = await userDetails.findOne({ email: UserEmail });
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    const ComparePassword = await bcrypt.compare(Password, user.Password);
-    if (!ComparePassword)
-      return res.status(401).json({ message: "Invalid password" });
+    const isPasswordValid = await bcrypt.compare(Password, user.Password);
+    if (!isPasswordValid) return res.status(401).json({ message: "Invalid password" });
 
+    // Farmer OTP login (skip direct login, handled in verifyOtp)
     if (UserRole === "farmer") {
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
       const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
@@ -143,33 +258,51 @@ const login = async (req, res) => {
         html: `<h3>Your Login OTP is: <b>${otp}</b></h3><p>Expires in 5 minutes.</p>`,
       });
 
-      return res.status(200).json({ 
-        message: "OTP sent for login",
-        requireOtp: true 
-      });
+      return res.status(200).json({ message: "OTP sent for login", requireOtp: true });
     }
 
-    // Update login history for admin
+    // ✅ Update UserDetails & Profile both
     const now = new Date();
-    const date = now.toLocaleDateString("en-US", { year: "numeric", month: "numeric", day: "numeric" });
-    const time = now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
+    const formattedDate = now.toLocaleDateString("en-IN");
+    const formattedTime = now.toLocaleTimeString("en-IN");
+
     await userDetails.findByIdAndUpdate(user._id, {
-      lastLogin: now,
-      isLogin: true,
-      $push: { loginHistory: { date, time } },
+      $set: { lastLogin: now, isLogin: true },
+      $push: { loginHistory: { date: formattedDate, time: formattedTime } }
     });
 
+    const profile = await Profile.findByIdAndUpdate(
+      user._id,
+      {
+        $set: { lastLogin: now, isLogin: true },
+        $push: { loginHistory: { date: formattedDate, time: formattedTime } }
+      },
+      { new: true }
+    );
+
     const token = createToken(user);
-    return res.status(200).json({
+
+    res.status(200).json({
+      success: true,
       message: "Login successful",
       token,
-      role: user.role,
-      user: { name: user.Name, email: user.email },
+      user: {
+        id: profile._id,
+        name: profile.Name,
+        email: profile.email,
+        phone: profile.phone,
+        role: profile.role,
+        profileImage: profile.profileImage,
+        lastLogin: profile.lastLogin,
+        loginHistory: profile.loginHistory,
+      }
     });
   } catch (e) {
-    return res.status(500).json({ message: "Server Error", error: e.message });
+    console.error("Login error:", e);
+    res.status(500).json({ message: "Server error", error: e.message });
   }
 };
+
 
 
 
@@ -191,6 +324,7 @@ const login = async (req, res) => {
 //     const token = createToken(user);
 //     await Otp.deleteMany({ email: UserEmail }); // ✅ cleanup after success
 
+
 //     return res.status(200).json({
 //       success: true,
 //       message: "OTP verified successfully",
@@ -198,6 +332,8 @@ const login = async (req, res) => {
 //       role: user.role || "farmer",
 //       user: { name: user.Name, email: user.email },
 //     });
+
+    
 //   } catch (e) {
 //     return res.status(500).json({ message: "OTP verification failed", error: e.message });
 //   }
@@ -216,15 +352,23 @@ const verifyOtp = async (req, res) => {
     const user = await userDetails.findOne({ email: UserEmail });
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    // Update login history for farmer
     const now = new Date();
-    const date = now.toLocaleDateString("en-US", { year: "numeric", month: "numeric", day: "numeric" });
-    const time = now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
+    const formattedDate = now.toLocaleDateString("en-IN");
+    const formattedTime = now.toLocaleTimeString("en-IN");
+
     await userDetails.findByIdAndUpdate(user._id, {
-      lastLogin: now,
-      isLogin: true,
-      $push: { loginHistory: { date, time } },
+      $set: { lastLogin: now, isLogin: true },
+      $push: { loginHistory: { date: formattedDate, time: formattedTime } }
     });
+
+    const profile = await Profile.findByIdAndUpdate(
+      user._id,
+      {
+        $set: { lastLogin: now, isLogin: true },
+        $push: { loginHistory: { date: formattedDate, time: formattedTime } }
+      },
+      { new: true }
+    );
 
     const token = createToken(user);
     await Otp.deleteMany({ email: UserEmail });
@@ -234,12 +378,18 @@ const verifyOtp = async (req, res) => {
       message: "OTP verified successfully",
       token,
       role: user.role || "farmer",
-      user: { name: user.Name, email: user.email },
+      user: {
+        name: profile.Name,
+        email: profile.email,
+        lastLogin: profile.lastLogin,
+        loginHistory: profile.loginHistory
+      }
     });
   } catch (e) {
     return res.status(500).json({ message: "OTP verification failed", error: e.message });
   }
 };
+
 
 
 const forgotPassword = async (req, res) => {
@@ -291,42 +441,73 @@ const logout = async (req, res) => {
     const user = jwt.verify(token, process.env.JWT_TOKEN_KEY);
 
     await userDetails.updateOne({ _id: user.id }, { isLogin: false });
+     await Profile.updateOne({ _id: user.id }, { isLogin: false })
     return res.status(200).json({ message: "Logout successful" });
   } catch (e) {
     return res.status(500).json({ message: "Logout failed", error: e.message });
   }
 };
 
+
 const getUserProfile = async (req, res) => {
   try {
-    const user = await userDetails.findById(req.user.id).select(
-      "Name email phoneNumber role lastLogin loginHistory title location joinDate farmsManaged experienceYears crops profileImage"
-    );
-    if (!user) return res.status(404).json({ message: "User not found" });
+    const user = await Profile.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
 
-    console.log("Raw user from DB:", user); // Debug log
-    const formattedUser = {
-      name: user.Name || "User",
-      email: user.email || "N/A",
-      phone: user.phoneNumber || "N/A",
-      role: user.role || "farmer",
-      title: user.title || "Farmer",
-      location: user.location || "India",
-      joinDate: user.joinDate || "Unknown",
-      farmsManaged: user.farmsManaged || "1 farm",
-      experienceYears: user.experienceYears || "1+ years",
-      crops: Array.isArray(user.crops) ? user.crops : ["Wheat", "Rice"],
-      loginHistory: Array.isArray(user.loginHistory) ? user.loginHistory : [],
-      profileImage: user.profileImage || null,
-      lastLogin: user.lastLogin ? user.lastLogin.toISOString() : null,
-    };
-    console.log("Formatted user:", formattedUser); // Debug log
-    return res.status(200).json(formattedUser);
-  } catch (e) {
-    console.error("Profile fetch failed:", e.message);
-    return res.status(500).json({ message: "Profile fetch failed", error: e.message });
+    res.json({
+      success: true,
+      user: {
+        id: user._id,
+        name: user.Name,
+        email: user.email,
+        phone: user.phoneNumber || null,
+        role: user.role || "user",
+        title: user.title || "Farmer",
+        location: user.location || "India",
+        farmsManaged: user.farmsManaged || "1 farm",
+        experienceYears: user.experienceYears || "1+ years",
+        crops: Array.isArray(user.crops) ? user.crops : [],
+        profileImage: user.profileImage || null,
+        joinDate: user.joinDate || "September 2025",
+        lastLogin: user.lastLogin || null,
+        loginHistory: Array.isArray(user.loginHistory) ? user.loginHistory : [],
+      },
+    });
+  } catch (err) {
+    console.error("Profile fetch error:", err);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+
+
+const profile = async (req, res) => {
+  try {
+    const user = await userDetails.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    res.json({
+      user: {
+        id: user._id,
+        name: user.Name,
+        email: user.email,
+        phone: user.phoneNumber,
+        role: user.role,
+        profileImage: user.profileImage,
+        lastLogin: user.lastLogin,
+        loginHistory: user.loginHistory || []
+      }
+    });
+  } catch (err) {
+    console.error("Profile fetch error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+
 
 const changePassword = async (req, res) => {
   try {
@@ -354,4 +535,5 @@ export {
   logout,
   getUserProfile,
   changePassword,
+  profile
 };
