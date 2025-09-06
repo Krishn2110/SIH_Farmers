@@ -76,38 +76,89 @@ const signup = async (req, res) => {
   }
 };
 
+// const login = async (req, res) => {
+//   try {
+//     const { UserEmail, Password, UserRole } = req.body;
+
+// const user = await userDetails.findOne({ email: UserEmail });
+// if (!user) return res.status(404).json({ message: "User not found" });
+
+// const ComparePassword = await bcrypt.compare(Password, user.Password);
+// if (!ComparePassword)
+//   return res.status(401).json({ message: "Invalid password" });
+
+//     if (UserRole === "farmer") {
+//   const otp = Math.floor(100000 + Math.random() * 900000).toString();
+//   const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+
+//   await Otp.create({ email: UserEmail, otp, expiresAt });
+
+//   await transporter.sendMail({
+//     from: `"Agri App 🌾" <${process.env.EMAIL_USER}>`,
+//     to: UserEmail,
+//     subject: "Login OTP",
+//     html: `<h3>Your Login OTP is: <b>${otp}</b></h3><p>Expires in 5 minutes.</p>`,
+//   });
+
+//   return res.status(200).json({ 
+//     message: "OTP sent for login",
+//     requireOtp: true 
+//   });
+// }
+
+
+//     // 🔹 Admin direct login
+//     const token = createToken(user);
+//     return res.status(200).json({
+//       message: "Login successful",
+//       token,
+//       role: user.role,
+//       user: { name: user.Name, email: user.email },
+//     });
+//   } catch (e) {
+//     return res.status(500).json({ message: "Server Error", error: e.message });
+//   }
+// };
+
+
 const login = async (req, res) => {
   try {
     const { UserEmail, Password, UserRole } = req.body;
+    const user = await userDetails.findOne({ email: UserEmail });
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-const user = await userDetails.findOne({ email: UserEmail });
-if (!user) return res.status(404).json({ message: "User not found" });
-
-const ComparePassword = await bcrypt.compare(Password, user.Password);
-if (!ComparePassword)
-  return res.status(401).json({ message: "Invalid password" });
+    const ComparePassword = await bcrypt.compare(Password, user.Password);
+    if (!ComparePassword)
+      return res.status(401).json({ message: "Invalid password" });
 
     if (UserRole === "farmer") {
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
-  const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+      await Otp.create({ email: UserEmail, otp, expiresAt });
 
-  await Otp.create({ email: UserEmail, otp, expiresAt });
+      await transporter.sendMail({
+        from: `"Agri App 🌾" <${process.env.EMAIL_USER}>`,
+        to: UserEmail,
+        subject: "Login OTP",
+        html: `<h3>Your Login OTP is: <b>${otp}</b></h3><p>Expires in 5 minutes.</p>`,
+      });
 
-  await transporter.sendMail({
-    from: `"Agri App 🌾" <${process.env.EMAIL_USER}>`,
-    to: UserEmail,
-    subject: "Login OTP",
-    html: `<h3>Your Login OTP is: <b>${otp}</b></h3><p>Expires in 5 minutes.</p>`,
-  });
+      return res.status(200).json({ 
+        message: "OTP sent for login",
+        requireOtp: true 
+      });
+    }
 
-  return res.status(200).json({ 
-    message: "OTP sent for login",
-    requireOtp: true 
-  });
-}
+    // Update login history for admin
+    const now = new Date();
+    const date = now.toLocaleDateString("en-US", { year: "numeric", month: "numeric", day: "numeric" });
+    const time = now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
+    await userDetails.findByIdAndUpdate(user._id, {
+      lastLogin: now,
+      isLogin: true,
+      $push: { loginHistory: { date, time } },
+    });
 
-
-    // 🔹 Admin direct login
     const token = createToken(user);
     return res.status(200).json({
       message: "Login successful",
@@ -122,14 +173,42 @@ if (!ComparePassword)
 
 
 
+// const verifyOtp = async (req, res) => {
+//   try {
+//     const { UserEmail, otp } = req.body;
+
+//     // ✅ always fetch the latest OTP
+//     const record = await Otp.findOne({ email: UserEmail, otp }).sort({ expiresAt: -1 });
+//     if (!record) return res.status(400).json({ message: "Invalid OTP" });
+
+//     if (record.expiresAt.getTime() < Date.now()) {
+//       return res.status(400).json({ message: "OTP expired" });
+//     }
+
+//     const user = await userDetails.findOne({ email: UserEmail });
+//     if (!user) return res.status(404).json({ message: "User not found" });
+
+//     const token = createToken(user);
+//     await Otp.deleteMany({ email: UserEmail }); // ✅ cleanup after success
+
+//     return res.status(200).json({
+//       success: true,
+//       message: "OTP verified successfully",
+//       token,
+//       role: user.role || "farmer",
+//       user: { name: user.Name, email: user.email },
+//     });
+//   } catch (e) {
+//     return res.status(500).json({ message: "OTP verification failed", error: e.message });
+//   }
+// };
+
+
 const verifyOtp = async (req, res) => {
   try {
     const { UserEmail, otp } = req.body;
-
-    // ✅ always fetch the latest OTP
     const record = await Otp.findOne({ email: UserEmail, otp }).sort({ expiresAt: -1 });
     if (!record) return res.status(400).json({ message: "Invalid OTP" });
-
     if (record.expiresAt.getTime() < Date.now()) {
       return res.status(400).json({ message: "OTP expired" });
     }
@@ -137,8 +216,18 @@ const verifyOtp = async (req, res) => {
     const user = await userDetails.findOne({ email: UserEmail });
     if (!user) return res.status(404).json({ message: "User not found" });
 
+    // Update login history for farmer
+    const now = new Date();
+    const date = now.toLocaleDateString("en-US", { year: "numeric", month: "numeric", day: "numeric" });
+    const time = now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
+    await userDetails.findByIdAndUpdate(user._id, {
+      lastLogin: now,
+      isLogin: true,
+      $push: { loginHistory: { date, time } },
+    });
+
     const token = createToken(user);
-    await Otp.deleteMany({ email: UserEmail }); // ✅ cleanup after success
+    await Otp.deleteMany({ email: UserEmail });
 
     return res.status(200).json({
       success: true,
@@ -210,10 +299,31 @@ const logout = async (req, res) => {
 
 const getUserProfile = async (req, res) => {
   try {
-    const user = await userDetails.findById(req.user.id).select("Name email lastLogin");
+    const user = await userDetails.findById(req.user.id).select(
+      "Name email phoneNumber role lastLogin loginHistory title location joinDate farmsManaged experienceYears crops profileImage"
+    );
     if (!user) return res.status(404).json({ message: "User not found" });
-    return res.status(200).json({ user });
+
+    console.log("Raw user from DB:", user); // Debug log
+    const formattedUser = {
+      name: user.Name || "User",
+      email: user.email || "N/A",
+      phone: user.phoneNumber || "N/A",
+      role: user.role || "farmer",
+      title: user.title || "Farmer",
+      location: user.location || "India",
+      joinDate: user.joinDate || "Unknown",
+      farmsManaged: user.farmsManaged || "1 farm",
+      experienceYears: user.experienceYears || "1+ years",
+      crops: Array.isArray(user.crops) ? user.crops : ["Wheat", "Rice"],
+      loginHistory: Array.isArray(user.loginHistory) ? user.loginHistory : [],
+      profileImage: user.profileImage || null,
+      lastLogin: user.lastLogin ? user.lastLogin.toISOString() : null,
+    };
+    console.log("Formatted user:", formattedUser); // Debug log
+    return res.status(200).json(formattedUser);
   } catch (e) {
+    console.error("Profile fetch failed:", e.message);
     return res.status(500).json({ message: "Profile fetch failed", error: e.message });
   }
 };

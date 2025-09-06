@@ -12,13 +12,11 @@ import {
 import upload from "../middlewares/upload.js";
 import passport from "passport";
 import jwt from "jsonwebtoken";
-import userDetails from "../models/UserModel.js";   
+import User from "../models/UserModel.js";   
 import sendOtpEmail from "../config/mailer.js";  
 import twilio from "twilio";
 import Otp from "../models/Otp.js"; 
 import bcrypt from "bcrypt";
-import Prediction from "../models/Prediction.js";
-import User from "../models/UserModel.js";
 
 const userRoute = Router();
 
@@ -33,17 +31,17 @@ userRoute.post("/changePassword", verifyToken, changePassword);
 
 // userRoute.post("/send-otp", async (req, res) => {
 //   try {
-//     const { userDetailsEmail } = req.body;   // ✅ match frontend
+//     const { UserEmail } = req.body;   // ✅ match frontend
 //     const otp = Math.floor(100000 + Math.random() * 900000);
 
-//     const user = await userDetails.findOne({ email: userDetailsEmail });
-//     if (!user) return res.status(404).json({ success: false, message: "userDetails not found" });
+//     const user = await User.findOne({ email: UserEmail });
+//     if (!user) return res.status(404).json({ success: false, message: "User not found" });
 
 //     user.otp = otp;
 //     user.otpExpiry = Date.now() + 5 * 60 * 1000;
 //     await user.save();
 
-//     await sendOtpEmail(userDetailsEmail, otp);
+//     await sendOtpEmail(UserEmail, otp);
 
 //     res.json({ success: true, message: "OTP sent successfully" });
 //   } catch (error) {
@@ -55,14 +53,14 @@ userRoute.post("/changePassword", verifyToken, changePassword);
 
 userRoute.post("/send-otp", async (req, res) => {
   try {
-    const { userDetailsEmail } = req.body;
-    if (!userDetailsEmail) {
+    const { UserEmail } = req.body;
+    if (!UserEmail) {
       return res.status(400).json({ success: false, message: "Email is required" });
     }
 
-    const user = await userDetails.findOne({ email: userDetailsEmail });
+    const user = await User.findOne({ email: UserEmail });
     if (!user) {
-      return res.status(404).json({ success: false, message: "userDetails not found" });
+      return res.status(404).json({ success: false, message: "User not found" });
     }
 
     // Generate OTP
@@ -70,10 +68,10 @@ userRoute.post("/send-otp", async (req, res) => {
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
     // Save in Otp collection
-    await Otp.create({ email: userDetailsEmail, otp, expiresAt });
+    await Otp.create({ email: UserEmail, otp, expiresAt });
 
     // Send OTP via email
-    await sendOtpEmail(userDetailsEmail, otp);
+    await sendOtpEmail(UserEmail, otp);
 
     res.json({ success: true, message: "OTP sent successfully" });
   } catch (error) {
@@ -153,14 +151,14 @@ userRoute.post("/send-phone-otp", async (req, res) => {
 //     }
 
 //     // 2. Find existing user
-//     let user = await userDetails.findOne({ phoneNumber: phone }); // ✅ FIX
+//     let user = await User.findOne({ phoneNumber: phone }); // ✅ FIX
 
 //     if (!user) {
 //       const hashedPassword = password ? await bcrypt.hash(password, 10) : undefined;
 
-//       user = new userDetails({
+//       user = new User({
 //         phoneNumber: phone, // ✅ FIX
-//         Name: name || "New userDetails",
+//         Name: name || "New User",
 //         Password: hashedPassword, // ✅ match your schema (capital P)
 //       });
 
@@ -217,16 +215,16 @@ userRoute.post("/verify-phone-otp", async (req, res) => {
     } 
 
     // 3. Find or create user
-    let user = await userDetails.findOne({ phoneNumber: phone });
+    let user = await User.findOne({ phoneNumber: phone });
     if (!user) {
       if (!password) {
         return res.status(400).json({ message: "Password is required for signup via phone" });
       }
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      user = new userDetails({
+      user = new User({
         phoneNumber: phone,
-        Name: name || "New userDetails",
+        Name: name || "New User",
         Password: hashedPassword,
       });
 
@@ -259,6 +257,31 @@ userRoute.post("/verify-phone-otp", async (req, res) => {
   }
 });
 
+
+userRoute.get("/profile", (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  try {
+    const user = {
+      name: req.user.Name || "User",
+      email: req.user.email || "N/A",
+      phone: req.user.phoneNumber || "N/A",
+      title: req.user.title || "Farmer",
+      location: req.user.location || "India",
+      joinDate: req.user.joinDate || "Unknown",
+      farmsManaged: req.user.farmsManaged || "1 farm",
+      experienceYears: req.user.experienceYears || "1+ years",
+      crops: req.user.crops || ["Wheat", "Rice"],
+      loginHistory: req.user.loginHistory || [],
+    };
+    res.json(user);
+  } catch (err) {
+    console.error("Error fetching user profile:", err);
+    res.status(500).json({ error: "Failed to fetch profile" });
+  }
+});
 
 
 

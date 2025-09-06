@@ -1,3 +1,4 @@
+
 // import mongoose from "mongoose";
 
 // const userSchema = new mongoose.Schema(
@@ -9,18 +10,18 @@
 //     email: {
 //       type: String,
 //       required: function () {
-//         return !this.phoneNumber; // email required only if no phone
+//         return !this.phoneNumber;
 //       },
-//       unique: false,
-      
+//       unique: true,
+//       sparse: true,
 //     },
 //     phoneNumber: {
 //       type: String,
 //       required: function () {
-//         return !this.email; // phone required only if no email
+//         return !this.email;
 //       },
-//       unique: false,
-     
+//       unique: true,
+//       sparse: true,
 //     },
 //     Password: {
 //       type: String,
@@ -48,7 +49,6 @@
 //   { collection: "UserDetails" }
 // );
 
-// // ✅ Ensure at least one (email or phone) exists
 // userSchema.pre("validate", function (next) {
 //   if (!this.email && !this.phoneNumber) {
 //     return next(new Error("Either email or phoneNumber is required"));
@@ -61,8 +61,6 @@
 // export default userDetails;
 
 
-
-
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
@@ -70,6 +68,7 @@ const userSchema = new mongoose.Schema(
     Name: {
       type: String,
       required: true,
+      default: "User",
     },
     email: {
       type: String,
@@ -109,6 +108,38 @@ const userSchema = new mongoose.Schema(
     otpExpiry: {
       type: Date,
     },
+    title: {
+      type: String,
+      default: "Farmer",
+    },
+    location: {
+      type: String,
+      default: "India",
+    },
+    joinDate: {
+      type: String,
+      default: () => new Date().toLocaleString("en-US", { month: "long", year: "numeric" }),
+    },
+    farmsManaged: {
+      type: String,
+      default: "1 farm",
+    },
+    experienceYears: {
+      type: String,
+      default: "1+ years",
+    },
+    crops: {
+      type: [String],
+      default: ["Wheat", "Rice"],
+    },
+    loginHistory: {
+      type: [{ date: String, time: String }],
+      default: [],
+    },
+    profileImage: {
+      type: String,
+      default: null,
+    },
   },
   { collection: "UserDetails" }
 );
@@ -121,5 +152,4 @@ userSchema.pre("validate", function (next) {
 });
 
 const userDetails = mongoose.model("User", userSchema);
-
 export default userDetails;
