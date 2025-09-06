@@ -17,6 +17,7 @@ function App() {
   return (
     <AuthProvider>
       <Router>
+       
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Home />} />
