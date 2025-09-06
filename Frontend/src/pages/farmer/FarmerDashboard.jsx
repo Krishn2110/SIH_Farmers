@@ -250,7 +250,7 @@ const FarmerDashboard = () => {
       </section>
 
       {/* Features / Insights Section */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-white">
         <div className="container px-4 mx-auto">
           <h2 className="mb-4 text-3xl font-bold text-center text-gray-900 poppins-bold">Empowering Farmers with Data-Driven Insights</h2>
           <p className="max-w-2xl mx-auto mb-16 text-center text-gray-600 poppins-light">
@@ -428,7 +428,7 @@ const FarmerDashboard = () => {
       </section>
 
       {/* About Us Section */}
-      <section id="about" className="py-20 bg-gray-50">
+      <section id="about" className="py-20 bg-white">
         <div className="container px-4 mx-auto">
           <div className={`flex flex-col md:flex-row items-center transition-all duration-1000 ${isVisible.about ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             <div className="mb-10 md:w-1/2 md:mb-0 md:pr-10">

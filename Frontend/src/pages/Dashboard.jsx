@@ -1060,7 +1060,7 @@ const Dashboard = () => {
   };
 
   const handleNewRecommendation = () => {
-    navigate("/recommendation");
+    navigate("/prediction");
   };
 
   const downloadPDF = (recommendation) => {
