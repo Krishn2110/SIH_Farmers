@@ -10,6 +10,7 @@ import dashboardImg from "../../assets/dashboard.jpg";
 import analysisImg from "../../assets/analysis.jpg";
 import databaseImg from "../../assets/database.jpg";
 import Navbar from "../../components/Navbar";
+import { useAuth } from "../../context/AuthContext";
 import Footer from "../../components/Footer";
 
 const FarmerDashboard = () => {
@@ -34,7 +35,7 @@ const FarmerDashboard = () => {
   const [loopNum, setLoopNum] = useState(0);
   const [typingSpeed, setTypingSpeed] = useState(150);
   
-  const isLoggedIn = false;
+  const { isAuthenticated } = useAuth();
   
   // Text for typing effect
   const texts = ["Precision", "AI Technology", "Data Insights", "Smart Farming"];
@@ -53,11 +54,11 @@ const FarmerDashboard = () => {
       
       setIsVisible({
         hero: true,
-        howItWorks: scrollPosition > windowHeight * 0.3,
-        features: scrollPosition > windowHeight * 1.2,
-        feedback: scrollPosition > windowHeight * 2,
-        about: scrollPosition > windowHeight * 2.8,
-        cta: scrollPosition > windowHeight * 3.5
+        howItWorks: scrollPosition > windowHeight * 0.2,
+        features: scrollPosition > windowHeight * 0.8,
+        feedback: scrollPosition > windowHeight * 1.4,
+        about: scrollPosition > windowHeight * 2.0,
+        cta: scrollPosition > windowHeight * 2.6
       });
     };
 
@@ -115,8 +116,8 @@ const FarmerDashboard = () => {
     setLoading(true);
 
     setTimeout(() => {
-      if (isLoggedIn) {
-        navigate("/");
+      if (isAuthenticated) {
+        navigate("/prediction");
         toast.success("Redirecting to your prediction page!");
       } else {
         navigate("/login");
@@ -151,7 +152,7 @@ const FarmerDashboard = () => {
             allocation, and boost your productivity.
           </p>
           <button
-  onClick={() => navigate("/dashboard")}
+  onClick={handleClick}
   disabled={loading}
   className={`bg-[#097A4E] text-white hover:bg-[#066042] font-bold py-3 px-8 rounded-lg text-lg flex items-center gap-2 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl poppins-semibold ${
     loading ? "opacity-70 cursor-not-allowed" : ""
@@ -327,7 +328,7 @@ const FarmerDashboard = () => {
       </section>
 
       {/* Feedback Section */}
-      <section className="py-20 bg-white">
+      <section id="feedback" className="py-20 bg-white">
         <div className="container px-4 mx-auto">
           <h2 className="mb-4 text-3xl font-bold text-center text-gray-900 poppins-bold">What Our Farmers Say</h2>
           <p className="max-w-2xl mx-auto mb-8 text-center text-gray-600 poppins-light">
@@ -427,11 +428,11 @@ const FarmerDashboard = () => {
       </section>
 
       {/* About Us Section */}
-      <section className="py-20 bg-gray-50">
+      <section id="about" className="py-20 bg-gray-50">
         <div className="container px-4 mx-auto">
           <div className={`flex flex-col md:flex-row items-center transition-all duration-1000 ${isVisible.about ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             <div className="mb-10 md:w-1/2 md:mb-0 md:pr-10">
-              <h2 className="text-3xl font-bold text-gray-极900 mb-6 poppins-bold">About AgriPredict</h2>
+              <h2 className="text-3xl font-bold text-gray-900 mb-6 poppins-bold">About AgriPredict</h2>
               <p className="mb-6 text-gray-600 poppins-light">
                 AgriPredict was founded in 2018 with a mission to revolutionize farming through data-driven insights. 
                 Our team of agronomists, data scientists, and software engineers work together to create cutting-edge 

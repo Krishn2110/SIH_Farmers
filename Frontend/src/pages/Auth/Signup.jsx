@@ -13,7 +13,7 @@ import {
   MdSms,
 } from "react-icons/md";
 import { FaLeaf, FaSeedling, FaTractor } from "react-icons/fa";
-import useAuth from "../../hooks/useAuth";
+import { useAuth } from "../../context/AuthContext";
 import api from "../../services/api";
 import loginImage from "../../assets/images/loginimg.jpg";
 
@@ -57,7 +57,6 @@ function Signup() {
     return () => clearInterval(interval);
   }, []);
 
-
   const handleSignup = async (e) => {
     e.preventDefault();
     setError("");
@@ -77,7 +76,6 @@ function Signup() {
 
         await api.post("/auth/send-otp", { UserEmail: formData.email });
         toast.success("OTP sent to your email. Please verify to complete signup.");
-        // navigate("/login");
         setShowOtp(true);
       } else {
         await api.post("/auth/send-phone-otp", { phone: formData.phone });
@@ -92,9 +90,8 @@ function Signup() {
     }
   };
 
-
-  // Handle OTP verification
- const handleOtpVerify = async (e) => {
+  // Handle OTP verification - UPDATED FOR AUTO LOGIN
+  const handleOtpVerify = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
@@ -105,22 +102,49 @@ function Signup() {
           UserEmail: formData.email,
           otp,
         });
+        
         toast.success("Account created successfully!");
-        // Optionally, auto-login
-        login(res.data.token, res.data.user);
-              navigate("/farmer-dashboard");  
+        
+        // AUTO LOGIN AFTER SUCCESSFUL SIGNUP
+        if (res.data.token && res.data.user) {
+          login(res.data.user, res.data.token);
+          navigate("/farmer-dashboard");
+        } else {
+          // If backend doesn't return user data, create a minimal user object
+          const userData = {
+            name: formData.name,
+            email: formData.email,
+            UserName: formData.name
+          };
+          login(userData, res.data.token);
+          navigate("/farmer-dashboard");
+        }
 
       } else {
         // Phone OTP
-        await api.post("/auth/verify-phone-otp", {
+        const res = await api.post("/auth/verify-phone-otp", {
           phone: formData.phone,
           otp,
           UserName: formData.name,
           password: formData.password,
         });
+        
         toast.success("Account created successfully!");
+        
+        // AUTO LOGIN AFTER SUCCESSFUL SIGNUP
+        if (res.data.token && res.data.user) {
+          login(res.data.user, res.data.token);
+        } else {
+          // If backend doesn't return user data, create a minimal user object
+          const userData = {
+            name: formData.name,
+            phone: formData.phone,
+            UserName: formData.name
+          };
+          login(userData, res.data.token);
+        }
+        navigate("/farmer-dashboard");
       }
-      navigate("/farmer-dashboard");
     } catch (err) {
       setError(err.response?.data?.message || "OTP verification failed");
       toast.error(err.response?.data?.message || "OTP verification failed");
@@ -462,6 +486,3 @@ function Signup() {
 }
 
 export default Signup;
-
-
-

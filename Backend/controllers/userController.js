@@ -40,11 +40,18 @@ const signup = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(Password, 13);
 
-    const user = await userDetails.create({
+    const userData = {
       Name: UserName,
       email: UserEmail,
       Password: hashedPassword,
-    });
+    };
+
+    // Add profile image if uploaded
+    if (req.file) {
+      userData.profileImage = `/uploads/${req.file.filename}`;
+    }
+
+    const user = await userDetails.create(userData);
 
     // 🔹 Generate OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -93,7 +100,10 @@ if (!ComparePassword)
     html: `<h3>Your Login OTP is: <b>${otp}</b></h3><p>Expires in 5 minutes.</p>`,
   });
 
-  return res.status(200).json({ message: "OTP sent for login" });
+  return res.status(200).json({ 
+    message: "OTP sent for login",
+    requireOtp: true 
+  });
 }
 
 

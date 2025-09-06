@@ -12,7 +12,7 @@ import {
 import upload from "../middlewares/upload.js";
 import passport from "passport";
 import jwt from "jsonwebtoken";
-import User from "../models/UserModel.js";   
+import userDetails from "../models/UserModel.js";   
 import sendOtpEmail from "../config/mailer.js";  
 import twilio from "twilio";
 import Otp from "../models/Otp.js"; 
@@ -31,17 +31,17 @@ userRoute.post("/changePassword", verifyToken, changePassword);
 
 // userRoute.post("/send-otp", async (req, res) => {
 //   try {
-//     const { UserEmail } = req.body;   // ✅ match frontend
+//     const { userDetailsEmail } = req.body;   // ✅ match frontend
 //     const otp = Math.floor(100000 + Math.random() * 900000);
 
-//     const user = await User.findOne({ email: UserEmail });
-//     if (!user) return res.status(404).json({ success: false, message: "User not found" });
+//     const user = await userDetails.findOne({ email: userDetailsEmail });
+//     if (!user) return res.status(404).json({ success: false, message: "userDetails not found" });
 
 //     user.otp = otp;
 //     user.otpExpiry = Date.now() + 5 * 60 * 1000;
 //     await user.save();
 
-//     await sendOtpEmail(UserEmail, otp);
+//     await sendOtpEmail(userDetailsEmail, otp);
 
 //     res.json({ success: true, message: "OTP sent successfully" });
 //   } catch (error) {
@@ -53,14 +53,14 @@ userRoute.post("/changePassword", verifyToken, changePassword);
 
 userRoute.post("/send-otp", async (req, res) => {
   try {
-    const { UserEmail } = req.body;
-    if (!UserEmail) {
+    const { userDetailsEmail } = req.body;
+    if (!userDetailsEmail) {
       return res.status(400).json({ success: false, message: "Email is required" });
     }
 
-    const user = await User.findOne({ email: UserEmail });
+    const user = await userDetails.findOne({ email: userDetailsEmail });
     if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
+      return res.status(404).json({ success: false, message: "userDetails not found" });
     }
 
     // Generate OTP
@@ -68,10 +68,10 @@ userRoute.post("/send-otp", async (req, res) => {
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
     // Save in Otp collection
-    await Otp.create({ email: UserEmail, otp, expiresAt });
+    await Otp.create({ email: userDetailsEmail, otp, expiresAt });
 
     // Send OTP via email
-    await sendOtpEmail(UserEmail, otp);
+    await sendOtpEmail(userDetailsEmail, otp);
 
     res.json({ success: true, message: "OTP sent successfully" });
   } catch (error) {
@@ -151,14 +151,14 @@ userRoute.post("/send-phone-otp", async (req, res) => {
 //     }
 
 //     // 2. Find existing user
-//     let user = await User.findOne({ phoneNumber: phone }); // ✅ FIX
+//     let user = await userDetails.findOne({ phoneNumber: phone }); // ✅ FIX
 
 //     if (!user) {
 //       const hashedPassword = password ? await bcrypt.hash(password, 10) : undefined;
 
-//       user = new User({
+//       user = new userDetails({
 //         phoneNumber: phone, // ✅ FIX
-//         Name: name || "New User",
+//         Name: name || "New userDetails",
 //         Password: hashedPassword, // ✅ match your schema (capital P)
 //       });
 
@@ -215,16 +215,16 @@ userRoute.post("/verify-phone-otp", async (req, res) => {
     } 
 
     // 3. Find or create user
-    let user = await User.findOne({ phoneNumber: phone });
+    let user = await userDetails.findOne({ phoneNumber: phone });
     if (!user) {
       if (!password) {
         return res.status(400).json({ message: "Password is required for signup via phone" });
       }
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      user = new User({
+      user = new userDetails({
         phoneNumber: phone,
-        Name: name || "New User",
+        Name: name || "New userDetails",
         Password: hashedPassword,
       });
 

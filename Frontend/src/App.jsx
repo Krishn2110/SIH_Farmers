@@ -1,61 +1,52 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
 import Login from "./pages/Auth/Login";
 import Signup from "./pages/Auth/Signup";
 import Home from "./pages/Home";
+import About from "./pages/About";
+import Feedback from "./pages/Feedback";
 import OAuthSuccess from "./pages/Auth/OAuthSuccess";
 import Prediction from "./pages/Prediction";
 import FarmerDashboard from "./pages/farmer/FarmerDashboard";
-
-// ✅ Protected Route Wrapper
-const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem("token"); // or however you store auth state
-
-  if (!token) {
-    return <Navigate to="/login" replace />;
-  }
-
-  return children;
-};
-
 import Profile from "./pages/Profile";
-import Dashboard from "./pages/farmer/Dashboard";
 import Dashboard from "./pages/Dashboard";
-import Prediction from "./pages/Prediction"
-import Prediction from "./pages/Prediction";
-
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/oauth-success" element={<OAuthSuccess />} />
+    <AuthProvider>
+      <Router>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/feedback" element={<Feedback />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/oauth-success" element={<OAuthSuccess />} />
 
-        {/* Protected Routes */}
-        <Route
-          path="/prediction"
-          element={
-            // <ProtectedRoute>
-              <Prediction />
-            // </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/farmer-dashboard"
-          element={
-            <ProtectedRoute>
-              <FarmerDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/prediction" element={<Prediction />} />
-      </Routes>
-    </Router>
+          {/* Protected Routes */}
+          <Route
+            path="/prediction"
+            element={
+              <ProtectedRoute>
+                <Prediction />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/farmer-dashboard"
+            element={
+              <ProtectedRoute>
+                <FarmerDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 

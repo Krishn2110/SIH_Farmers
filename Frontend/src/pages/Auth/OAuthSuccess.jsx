@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import useAuth from "../../hooks/useAuth";
+import { useAuth } from "../../context/AuthContext";
 
 function OAuthSuccess() {
   const navigate = useNavigate();
@@ -16,7 +16,8 @@ function OAuthSuccess() {
 
     if (token && email && name && role) {
       // Store token in your auth context
-      login(token, role);
+      const userData = { name, email, role };
+      login(userData, token);
 
       // Redirect based on role
       if (role === "admin") navigate("/admin-dashboard");
