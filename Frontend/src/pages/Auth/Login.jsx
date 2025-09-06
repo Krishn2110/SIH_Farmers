@@ -29,26 +29,12 @@ const Login = () => {
     setError("");
     setLoading(true);
     try {
-      const res = await api.post("/auth/login", { 
-        UserEmail, 
-        Password: password, 
-        UserRole: "farmer" 
-      });
-      
+      const res = await api.post("/auth/login", { UserEmail, password, Password: password, UserRole: "farmer" });
       if (res.data?.requireOtp) {
         setShowOtp(true);
       } else {
-        // Ensure we have both user data and token
-        if (res.data.token) {
-          login(res.data.user || { 
-            name: res.data.name, 
-            email: UserEmail,
-            UserName: res.data.name 
-          }, res.data.token);
-          navigate("/farmer-dashboard");
-        } else {
-          throw new Error("Login response missing token");
-        }
+        login(res.data);
+        navigate("/farmer-dashboard");
       }
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
@@ -57,7 +43,6 @@ const Login = () => {
       setLoading(false);
     }
   };
-
   // otp verify - UPDATED FOR PROPER LOGIN
   const handleOtpVerify = async (e) => {
     e.preventDefault();
