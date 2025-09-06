@@ -219,14 +219,7 @@ const About = () => {
               </div>
             </div>
 
-            <div className="mt-12 p-6 bg-[#097A4E] rounded-lg text-white">
-              <h3 className="text-2xl font-bold mb-4 poppins-bold">Office Hours</h3>
-              <p className="text-lg poppins-light mb-2">Monday - Friday: 9:00 AM - 6:00 PM (IST)</p>
-              <p className="text-lg poppins-light">Saturday: 10:00 AM - 4:00 PM (IST)</p>
-              <p className="text-sm mt-4 poppins-light opacity-90">
-                We typically respond to emails within 24 hours during business days.
-              </p>
-            </div>
+            
           </div>
         </div>
       </section>

@@ -21,12 +21,6 @@ const Feedback = () => {
     contactPreference: "email"
   });
   const [loading, setLoading] = useState(false);
-  const [isVisible, setIsVisible] = useState({
-    hero: false,
-    form: false,
-    testimonials: false,
-    stats: false
-  });
 
   useEffect(() => {
     // Load Poppins font
@@ -43,24 +37,6 @@ const Feedback = () => {
         email: user.email || user.UserEmail || ""
       }));
     }
-
-    // Animation triggers on scroll
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY;
-      const windowHeight = window.innerHeight;
-      
-      setIsVisible({
-        hero: true,
-        form: scrollPosition > windowHeight * 0.1,
-        testimonials: scrollPosition > windowHeight * 0.5,
-        stats: scrollPosition > windowHeight * 0.9
-      });
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    handleScroll();
-    
-    return () => window.removeEventListener('scroll', handleScroll);
   }, [isAuthenticated, user]);
 
   const handleInputChange = (e) => {
@@ -79,14 +55,19 @@ const Feedback = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      toast.success("Thank you for your feedback! We'll get back to you soon.");
+  try {
+    const res = await fetch("http://localhost:5000/api/feedback", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      toast.success(data.message || "Thank you for your feedback!");
       setFormData({
         name: "",
         email: "",
@@ -96,14 +77,17 @@ const Feedback = () => {
         message: "",
         experience: "",
         suggestions: "",
-        contactPreference: "email"
+        contactPreference: "email",
       });
-    } catch (error) {
-      toast.error("Failed to submit feedback. Please try again.");
-    } finally {
-      setLoading(false);
+    } else {
+      toast.error(data.message || "Failed to submit feedback");
     }
-  };
+  } catch (error) {
+    toast.error("Something went wrong. Please try again.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const categories = [
     "General Feedback",
@@ -147,7 +131,7 @@ const Feedback = () => {
       {/* Feedback Form Section */}
       <section className="py-20 bg-white">
         <div className="container px-4 mx-auto max-w-4xl">
-          <div className={`transition-all duration-700 ${isVisible.form ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+          <div>
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-gray-900 mb-4 poppins-bold">Tell Us What You Think</h2>
               <p className="text-lg text-gray-600 poppins-light">
@@ -236,10 +220,9 @@ const Feedback = () => {
                       key={star}
                       type="button"
                       onClick={() => handleRatingClick(star)}
-                      className={`text-3xl transition-all duration-200 ${
-                        star <= formData.rating
-                          ? 'text-yellow-400'
-                          : 'text-gray-300 hover:text-yellow-300'
+                      className={`text-3xl ${star <= formData.rating
+                        ? 'text-yellow-400'
+                        : 'text-gray-300'
                       }`}
                     >
                       ★
@@ -355,7 +338,7 @@ const Feedback = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="bg-[#097A4E] text-white hover:bg-[#066042] font-bold py-4 px-12 rounded-lg text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl poppins-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-[#097A4E] text-white font-bold py-4 px-12 rounded-lg text-lg shadow-lg poppins-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? "Submitting..." : "Submit Feedback"}
                 </button>
@@ -368,7 +351,7 @@ const Feedback = () => {
       {/* Testimonials Section */}
       <section className="py-20 bg-gray-50">
         <div className="container px-4 mx-auto">
-          <div className={`text-center mb-16 transition-all duration-700 ${isVisible.testimonials ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+          <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-gray-900 mb-4 poppins-bold">What Our Users Say</h2>
             <p className="text-lg text-gray-600 poppins-light">
               Real feedback from farmers who use AgriPredict
@@ -427,7 +410,7 @@ const Feedback = () => {
       {/* Stats Section */}
       <section className="py-20 bg-[#097A4E]">
         <div className="container px-4 mx-auto">
-          <div className={`text-center transition-all duration-700 ${isVisible.stats ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+          <div className="text-center">
             <h2 className="text-3xl font-bold text-white mb-16 poppins-bold">Your Feedback Matters</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -462,13 +445,13 @@ const Feedback = () => {
           <div className="space-x-4">
             <button
               onClick={() => navigate("/about")}
-              className="bg-[#097A4E] text-white hover:bg-[#066042] font-bold py-3 px-8 rounded-lg text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl poppins-semibold"
+              className="bg-[#097A4E] text-white font-bold py-3 px-8 rounded-lg text-lg shadow-lg poppins-semibold"
             >
               Learn More About Us
             </button>
             <button
               onClick={() => navigate("/")}
-              className="bg-white text-[#097A4E] border-2 border-[#097A4E] hover:bg-[#097A4E] hover:text-white font-bold py-3 px-8 rounded-lg text-lg transition-all duration-300 transform hover:scale-105 poppins-semibold"
+              className="bg-[#097A4E] text-white font-bold py-3 px-8 rounded-lg text-lg shadow-lg poppins-semibold"
             >
               Back to Home
             </button>

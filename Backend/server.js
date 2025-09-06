@@ -8,6 +8,7 @@ import passport from "passport";
 import "./config/passport.js";
 import userRoute from "./routes/User.js";
 import connectDB from "./config/mongo.js";
+import feedbackRoutes from "./routes/feedbackRoutes.js";
 
 dotenv.config();
 
@@ -35,6 +36,8 @@ app.use(passport.initialize());
 
 app.use("/api/auth", userRoute);
 // app.use("/auth", userRoute);
+app.use("/api/feedback", feedbackRoutes);
+
 
 connectDB();
 
