@@ -11,6 +11,7 @@ import FarmerDashboard from "./pages/farmer/FarmerDashboard";
 import Profile from "./pages/Profile";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Chatbot from "./pages/Chatbot";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/oauth-success" element={<OAuthSuccess />} />
+          <Route path="/chatbot" element={<Chatbot/>}/>
 
           {/* Protected Routes */}
           <Route

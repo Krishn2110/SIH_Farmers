@@ -17,6 +17,8 @@ import sendOtpEmail from "../config/mailer.js";
 import twilio from "twilio";
 import Otp from "../models/Otp.js"; 
 import bcrypt from "bcrypt";
+import Prediction from "../models/Prediction.js";
+import User from "../models/UserModel.js";
 
 const userRoute = Router();
 
