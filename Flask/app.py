@@ -126,6 +126,31 @@ model = model_data['model']
 label_encoder = model_data['label_encoder']
 features_list = model_data['features']
 
+crop_image_mapping = {
+    "Apple": "Apple.jpeg",
+    "Banana": "Banana.jpeg",
+    "Blackgram": "Blackgram.jpeg",
+    "ChickPea": "ChickPea.jpeg",
+    "Coconut": "Coconut.jpeg",
+    "Coffee": "Coffee.jpeg",
+    "Cotton": "Cotton.jpeg",
+    "Grapes": "Grapes.jpeg",
+    "Jute": "Jute.jpeg",
+    "KidneyBeans": "KidneyBeans.jpeg",
+    "Lentil": "Lentil.jpeg",
+    "Maize": "Maize.jpeg",
+    "MothBeans": "MothBeans.jpeg",
+    "MungBean": "MungBean.jpeg",
+    "Muskmelon": "Muskmelon.jpeg",
+    "Orange": "Orange.jpeg",
+    "Papaya": "Papaya.jpeg",
+    "PigeonPeas": "PigeonPeas.jpeg",
+    "Pomegranate": "Pomegranate.jpeg",
+    "Rice": "Rice.jpeg",
+    "Watermelon": "Watermelon.jpeg",
+}
+
+
 
 # =========================
 # 🌐 Routes
@@ -168,8 +193,13 @@ def predict():
         prediction_encoded = model.predict(features)[0]
         prediction = label_encoder.inverse_transform([prediction_encoded])[0]
 
-        return jsonify({"prediction": str(prediction)})
+        # ✅ Add image path if available
+        image_file = crop_image_mapping.get(prediction, None)
 
+        return jsonify({
+            "prediction": str(prediction),
+            "image": f"/assets/photos-crop/{image_file}" if image_file else None
+        })
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 

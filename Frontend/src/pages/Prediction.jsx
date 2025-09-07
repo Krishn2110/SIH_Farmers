@@ -1,7 +1,33 @@
 import React, { useState } from 'react'; 
-import { ChevronDown } from 'lucide-react';
+import { Apple, Banana, ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+
+// ✅ Import crop images
+// Crop images
+import mango from "../assets/photos-crop/Mango.jpeg";
+import apple from "../assets/photos-crop/Apple.jpeg";
+import banana from "../assets/photos-crop/Banana.jpeg";
+import blackgram from "../assets/photos-crop/Blackgram.jpeg";
+import chickpea from "../assets/photos-crop/ChickPea.jpeg";
+import coconut from "../assets/photos-crop/Coconut.jpeg";
+import coffee from "../assets/photos-crop/Coffee.jpeg";
+import cotton from "../assets/photos-crop/Cotton.jpeg";
+import grapes from "../assets/photos-crop/Grapes.jpeg";
+import jute from "../assets/photos-crop/Jute.jpeg";
+import kidneybeans from "../assets/photos-crop/KidneyBeans.jpeg";
+import lentil from "../assets/photos-crop/Lentil.jpeg";
+import maize from "../assets/photos-crop/Maize.jpeg";
+import mothbeans from "../assets/photos-crop/MothBeans.jpeg";
+import mungbean from "../assets/photos-crop/MungBean.jpeg";
+import muskmelon from "../assets/photos-crop/Muskmelon.jpeg";
+import orange from "../assets/photos-crop/Orange.jpeg";
+import papaya from "../assets/photos-crop/Papaya.jpeg";
+import pigeonpeas from "../assets/photos-crop/PigeonPeas.jpeg";
+import pomegranate from "../assets/photos-crop/Pomegranate.jpeg";
+import rice from "../assets/photos-crop/Rice.jpeg";
+import watermelon from "../assets/photos-crop/Watermelon.jpeg";
+
 
 const Prediction = () => {
   const [soilType, setSoilType] = useState('Select Soil Type');
@@ -23,9 +49,35 @@ const Prediction = () => {
     fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
   };
 
+  // ✅ Crop → Image mapping
+ const cropImages = {
+  mango: mango,
+  apple: apple,
+  banana: banana,
+  blackgram: blackgram,
+  chickpea: chickpea,
+  coconut: coconut,
+  coffee: coffee,
+  Cotton: cotton,
+  grapes: grapes,
+  jute: jute,
+  kidneybeans: kidneybeans,
+  lentil: lentil,
+  maize: maize,
+  mothBeans: mothbeans,
+  mungBean: mungbean,
+  muskmelon: muskmelon,
+  orange: orange,
+  papaya: papaya,
+  PigeonPeas: pigeonpeas,
+  Pomegranate: pomegranate,
+  rice: rice,
+  watermelon: watermelon,
+};
+
+
   // Function to call Flask API
   const handlePredict = async () => {
-    // Basic validation
     if (soilType === 'Select Soil Type' || previousCrop === 'Select Previous Crop') {
       setResult("Please select soil type and previous crop");
       return;
@@ -74,7 +126,9 @@ const Prediction = () => {
             style={fontFamily}>
             CROP YIELD Prediction
         </h1>
-        <p className="text-gray-600/70 text-lg" style={fontFamily}>Enter your farm's data to get an accurate yield prediction.</p>
+        <p className="text-gray-600/70 text-lg" style={fontFamily}>
+          Enter your farm's data to get an accurate yield prediction.
+        </p>
       </div>
 
       {/* Form Container */}
@@ -88,11 +142,10 @@ const Prediction = () => {
               <div className="space-y-8">
                 {/* Soil Type */}
                 <div className="group">
-                  <label className="block text-m font-semibold text-gray-700 mb-3" style={fontFamily}>Soil Type</label>
+                  <label className="block text-m font-semibold text-gray-700 mb-3">Soil Type</label>
                   <div className="relative">
                     <select 
                       className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl appearance-none bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-200 focus:border-green-500 transition-all duration-300 hover:border-green-300 group-hover:shadow-md"
-                      style={fontFamily}
                       value={soilType}
                       onChange={(e) => setSoilType(e.target.value)}
                     >
@@ -108,12 +161,11 @@ const Prediction = () => {
 
                 {/* Phosphorus (K) */}
                 <div className="group">
-                  <label className="block text-m font-semibold text-gray-700 mb-3" style={fontFamily}>Phosphorus (K)</label>
+                  <label className="block text-m font-semibold text-gray-700 mb-3">Phosphorus (K)</label>
                   <input
                     type="text"
                     placeholder="e.g., 120"
-                    className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-200 focus:border-green-500 transition-all duration-300 hover:border-green-300 group-hover:shadow-md placeholder-gray-400"
-                    style={fontFamily}
+                    className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl"
                     value={phosphorus}
                     onChange={(e) => setPhosphorus(e.target.value)}
                   />
@@ -121,12 +173,11 @@ const Prediction = () => {
 
                 {/* Nitrogen (N) */}
                 <div className="group">
-                  <label className="block text-m font-semibold text-gray-700 mb-3" style={fontFamily}>Nitrogen (N)</label>
+                  <label className="block text-m font-semibold text-gray-700 mb-3">Nitrogen (N)</label>
                   <input
                     type="text"
                     placeholder="e.g. 50"
-                    className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-200 focus:border-green-500 transition-all duration-300 hover:border-green-300 group-hover:shadow-md placeholder-gray-400"
-                    style={fontFamily}
+                    className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl"
                     value={nitrogen}
                     onChange={(e) => setNitrogen(e.target.value)}
                   />
@@ -134,12 +185,11 @@ const Prediction = () => {
 
                 {/* Phosphorous (P) */}
                 <div className="group">
-                  <label className="block text-m font-semibold text-gray-700 mb-3" style={fontFamily}>Phosphorous (P)</label>
+                  <label className="block text-m font-semibold text-gray-700 mb-3">Phosphorous (P)</label>
                   <input
                     type="text"
                     placeholder="e.g. 50"
-                    className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-200 focus:border-green-500 transition-all duration-300 hover:border-green-300 group-hover:shadow-md placeholder-gray-400"
-                    style={fontFamily}
+                    className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl"
                     value={phosphorous}
                     onChange={(e) => setPhosphorous(e.target.value)}
                   />
@@ -150,12 +200,11 @@ const Prediction = () => {
               <div className="space-y-8">
                 {/* Soil pH */}
                 <div className="group">
-                  <label className="block text-m font-semibold text-gray-700 mb-3" style={fontFamily}>Soil pH</label>
+                  <label className="block text-m font-semibold text-gray-700 mb-3">Soil pH</label>
                   <input
                     type="text"
                     placeholder="e.g., 6.5"
-                    className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition-all duration-300 hover:border-blue-300 group-hover:shadow-md placeholder-gray-400"
-                    style={fontFamily}
+                    className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl"
                     value={soilPh}
                     onChange={(e) => setSoilPh(e.target.value)}
                   />
@@ -163,12 +212,11 @@ const Prediction = () => {
 
                 {/* Average Temperature */}
                 <div className="group">
-                  <label className="block text-m font-semibold text-gray-700 mb-3" style={fontFamily}>Average Temperature (°C)</label>
+                  <label className="block text-m font-semibold text-gray-700 mb-3">Average Temperature (°C)</label>
                   <input
                     type="text"
                     placeholder="e.g., 25"
-                    className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition-all duration-300 hover:border-blue-300 group-hover:shadow-md placeholder-gray-400"
-                    style={fontFamily}
+                    className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl"
                     value={temperature}
                     onChange={(e) => setTemperature(e.target.value)}
                   />
@@ -176,12 +224,11 @@ const Prediction = () => {
 
                 {/* Rainfall */}
                 <div className="group">
-                  <label className="block text-m font-semibold text-gray-700 mb-3" style={fontFamily}>Rainfall (mm)</label>
+                  <label className="block text-m font-semibold text-gray-700 mb-3">Rainfall (mm)</label>
                   <input
                     type="text"
                     placeholder="e.g., 500"
-                    className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition-all duration-300 hover:border-blue-300 group-hover:shadow-md placeholder-gray-400"
-                    style={fontFamily}
+                    className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl"
                     value={rainfall}
                     onChange={(e) => setRainfall(e.target.value)}
                   />
@@ -189,12 +236,11 @@ const Prediction = () => {
 
                 {/* Humidity */}
                 <div className="group">
-                  <label className="block text-m font-semibold text-gray-700 mb-3" style={fontFamily}>Humidity (%)</label>
+                  <label className="block text-m font-semibold text-gray-700 mb-3">Humidity (%)</label>
                   <input
                     type="text"
                     placeholder="e.g., 60"
-                    className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition-all duration-300 hover:border-blue-300 group-hover:shadow-md placeholder-gray-400"
-                    style={fontFamily}
+                    className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl"
                     value={humidity}
                     onChange={(e) => setHumidity(e.target.value)}
                   />
@@ -204,19 +250,15 @@ const Prediction = () => {
 
             {/* Crop History Section */}
             <div className="mt-12">
-              <h2 className="text-2xl font-bold text-gray-800 mb-8 flex items-center" style={fontFamily}>
-                <div className="w-2 h-8 bg-gradient-to-b rounded-full mr-3"></div>
-                Crop History
-              </h2>
+              <h2 className="text-2xl font-bold text-gray-800 mb-8">Crop History</h2>
               
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Previous Crop */}
                 <div className="group">
-                  <label className="block text-m font-semibold text-gray-700 mb-3" style={fontFamily}>Previous Crop</label>
+                  <label className="block text-m font-semibold text-gray-700 mb-3">Previous Crop</label>
                   <div className="relative">
                     <select 
-                      className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl appearance-none bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-200 focus:border-purple-500 transition-all duration-300 hover:border-purple-300 group-hover:shadow-md"
-                      style={fontFamily}
+                      className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl"
                       value={previousCrop}
                       onChange={(e) => setPreviousCrop(e.target.value)}
                     >
@@ -227,18 +269,17 @@ const Prediction = () => {
                       <option>Soybean</option>
                       <option>Cotton</option>
                     </select>
-                    <ChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500 pointer-events-none transition-transform group-hover:scale-110" />
+                    <ChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
                   </div>
                 </div>
 
                 {/* Yield of Previous Crop */}
                 <div className="group">
-                  <label className="block text-m font-semibold text-gray-700 mb-3" style={fontFamily}>Yield of Previous Crop (tons/hectare)</label>
+                  <label className="block text-m font-semibold text-gray-700 mb-3">Yield of Previous Crop (tons/hectare)</label>
                   <input
                     type="text"
                     placeholder="e.g., 3.5"
-                    className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-200 focus:border-purple-500 transition-all duration-300 hover:border-purple-300 group-hover:shadow-md placeholder-gray-400"
-                    style={fontFamily}
+                    className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl"
                     value={previousYield}
                     onChange={(e) => setPreviousYield(e.target.value)}
                   />
@@ -248,32 +289,40 @@ const Prediction = () => {
 
             {/* Buttons Row */}
             <div className="flex justify-between items-center mt-12">
-              {/* Back Button */}
               <button
                 onClick={() => navigate('/')}
-                className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold px-8 py-3 rounded-full transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-gray-200"
-                style={fontFamily}
+                className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold px-8 py-3 rounded-full"
               >
                 Back
               </button>
 
-              {/* Predict Button */}
               <button 
                 onClick={handlePredict}
                 disabled={loading}
-                className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold px-12 py-4 rounded-full transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-green-200 transform hover:scale-105 hover:shadow-xl shadow-lg disabled:opacity-50" 
-                style={fontFamily}
+                className="bg-gradient-to-r from-green-500 to-green-600 text-white font-bold px-12 py-4 rounded-full disabled:opacity-50"
               >
                 {loading ? "Predicting..." : "Predict Yield"}
               </button>
             </div>
 
-            {/* Show prediction result */}
+            {/* Show prediction result + image */}
             {result && (
+            // {(
               <div className="mt-10 text-center">
                 <h2 className="text-2xl font-bold text-green-600">
                   Predicted Crop: {result}
                 </h2>
+                {cropImages[result] && (
+                // { (
+                  <div className="mt-6 flex justify-center">
+                    <img 
+                      src={cropImages[result]} 
+                      // src={[mango]} 
+                      alt={result} 
+                      className="w-64 h-64 object-cover rounded-2xl shadow-xl border border-gray-200" 
+                    />
+                  </div>
+                )}
               </div>
             )}
 
